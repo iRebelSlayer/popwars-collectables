@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { products as baseProducts, Product } from "@/lib/products";
 import { getCustomProducts, saveCustomProducts } from "@/lib/customProducts";
 
-const ADMIN_PASSCODE = "popwars2026";
+const ADMIN_PASSCODE = "iRebelPacman@123";
 const ADMIN_UNLOCKED_KEY = "popwars-admin-unlocked";
 
 const BADGE_CLASS_BY_LABEL: Record<string, string> = {

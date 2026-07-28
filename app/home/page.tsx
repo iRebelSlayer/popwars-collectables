@@ -125,15 +125,21 @@ export default function HomePage() {
             <p className="eyebrow">Every Shelf Tells a Story</p>
             <h1>The Vault is Open</h1>
             <p>Funko Pops, anime figures, and 3D prints — claimed one traveler at a time.</p>
-            <div className="search">
+            <form
+              className="search"
+              onSubmit={(e) => {
+                e.preventDefault();
+                productsSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+            >
               <input
                 type="text"
                 placeholder="What are you hunting today?"
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
               />
-              <button type="button">Search</button>
-            </div>
+              <button type="submit">Search</button>
+            </form>
             <div className="hero-highlights">
               <span>⚡ Fast WhatsApp ordering</span>
               <span>🏛 Museum-grade presentation</span>
