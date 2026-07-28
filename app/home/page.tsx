@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { products as baseProducts, Product } from "@/lib/products";
 import { getAllProducts } from "@/lib/customProducts";
 import { openWhatsAppOrder } from "@/lib/whatsapp";
@@ -39,6 +40,7 @@ function ProductThumb({ product }: { product: Product }) {
 }
 
 export default function HomePage() {
+  const router = useRouter();
   const [allProducts, setAllProducts] = useState<Product[]>(baseProducts);
   const [filter, setFilter] = useState("");
   const [activeChip, setActiveChip] = useState("");
@@ -115,6 +117,16 @@ export default function HomePage() {
             <a className="nav-pill" href="https://wa.me/919821318230?text=Hello%20Popwars%20Collectables%2C%20I%20would%20like%20to%20place%20an%20order." target="_blank" rel="noopener">
               Order on WhatsApp
             </a>
+            <button
+              className="replay"
+              type="button"
+              onClick={() => {
+                localStorage.removeItem("popwars-intro-seen");
+                router.push("/");
+              }}
+            >
+              Replay Entrance
+            </button>
           </div>
         </nav>
       </header>
