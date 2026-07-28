@@ -85,7 +85,7 @@ export default function ProductPage() {
         <div className="related-grid">
           {related.map((entry) => (
             <article className="p-card" key={entry.id}>
-              <div className="p-thumb">{entry.images?.[0] ? <img src={entry.images[0]} alt={entry.name} /> : entry.emoji}</div>
+              <Link className="p-thumb" href={`/product/${entry.id}`}>{entry.images?.[0] ? <img src={entry.images[0]} alt={entry.name} /> : entry.emoji}</Link>
               <div className="p-body">
                 <div className="name">{entry.name}</div>
                 <div className="price">₹{entry.price.toLocaleString("en-IN")}</div>
