@@ -10,6 +10,7 @@ import { openWhatsAppOrder } from "@/lib/whatsapp";
 export default function ProductPage() {
   const params = useParams<{ id: string }>();
   const [allProducts, setAllProducts] = useState<Product[]>(baseProducts);
+  const [activeImage, setActiveImage] = useState(0);
 
   useEffect(() => {
     // One-time hydration from localStorage (unavailable during server render), merging in admin-added products.
@@ -19,6 +20,13 @@ export default function ProductPage() {
 
   const product = allProducts.find((entry) => entry.id === params.id) || allProducts[0];
   const related = allProducts.filter((entry) => entry.id !== product?.id).slice(0, 3);
+  const images = product?.images || [];
+
+  useEffect(() => {
+    // Reset the gallery selection when navigating to a different product.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setActiveImage(0);
+  }, [product?.id]);
 
   if (!product) return null;
 
@@ -33,8 +41,24 @@ export default function ProductPage() {
       </nav>
 
       <section className="product-hero">
-        <div className="product-gallery">
-          {product.image ? <img src={product.image} alt={product.name} /> : product.emoji}
+        <div>
+          <div className="product-gallery">
+            {images.length > 0 ? <img src={images[activeImage]} alt={product.name} /> : product.emoji}
+          </div>
+          {images.length > 1 && (
+            <div className="gallery-thumbs">
+              {images.map((src, index) => (
+                <button
+                  key={src}
+                  type="button"
+                  className={`gallery-thumb ${index === activeImage ? "active" : ""}`}
+                  onClick={() => setActiveImage(index)}
+                >
+                  <img src={src} alt={`${product.name} view ${index + 1}`} />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         <div className="product-details">
           <p className="eyebrow">Collector spotlight</p>
@@ -61,7 +85,7 @@ export default function ProductPage() {
         <div className="related-grid">
           {related.map((entry) => (
             <article className="p-card" key={entry.id}>
-              <div className="p-thumb">{entry.image ? <img src={entry.image} alt={entry.name} /> : entry.emoji}</div>
+              <div className="p-thumb">{entry.images?.[0] ? <img src={entry.images[0]} alt={entry.name} /> : entry.emoji}</div>
               <div className="p-body">
                 <div className="name">{entry.name}</div>
                 <div className="price">₹{entry.price.toLocaleString("en-IN")}</div>

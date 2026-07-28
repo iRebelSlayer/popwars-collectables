@@ -38,10 +38,11 @@ function slugify(text: string) {
 }
 
 function ProductCard({ product, onRemove }: { product: Product; onRemove?: () => void }) {
+  const thumb = product.images?.[0];
   return (
     <article className="p-card">
       <div className="p-thumb">
-        {product.image ? <img src={product.image} alt={product.name} /> : product.emoji}
+        {thumb ? <img src={thumb} alt={product.name} /> : product.emoji}
         {product.badge && <span className={`badge ${product.badgeClass}`}>{product.badge}</span>}
       </div>
       <div className="p-body">
@@ -74,7 +75,7 @@ export default function AdminPage() {
   const [price, setPrice] = useState("");
   const [badge, setBadge] = useState("");
   const [status, setStatus] = useState("in-stock");
-  const [image, setImage] = useState("");
+  const [imagesText, setImagesText] = useState("");
   const [emoji, setEmoji] = useState("🎁");
   const [description, setDescription] = useState("");
 
@@ -122,6 +123,11 @@ export default function AdminPage() {
     const priceNum = Number(price);
     if (!name.trim() || !collection || !priceNum) return;
 
+    const images = imagesText
+      .split("\n")
+      .map((url) => url.trim())
+      .filter(Boolean);
+
     const product: Product = {
       id: `${slugify(name)}-${Date.now().toString(36)}`,
       name: name.trim(),
@@ -129,7 +135,7 @@ export default function AdminPage() {
       collection,
       price: priceNum,
       emoji: emoji.trim() || "🎁",
-      image: image.trim() || undefined,
+      images: images.length > 0 ? images : undefined,
       badge: badge || undefined,
       badgeClass: badge ? BADGE_CLASS_BY_LABEL[badge] : undefined,
       status: STATUS_TEXT_BY_VALUE[status],
@@ -145,7 +151,7 @@ export default function AdminPage() {
     setPrice("");
     setBadge("");
     setStatus("in-stock");
-    setImage("");
+    setImagesText("");
     setEmoji("🎁");
     setDescription("");
     setGenre(FRANCHISES[0]);
@@ -274,15 +280,20 @@ export default function AdminPage() {
             </label>
 
             <label>
-              Image URL (optional)
-              <input type="text" placeholder="https://... (leave blank to use an emoji thumbnail)" value={image} onChange={(e) => setImage(e.target.value)} />
-            </label>
-
-            <label>
               Emoji Thumbnail
               <input type="text" placeholder="🍥" value={emoji} onChange={(e) => setEmoji(e.target.value)} />
             </label>
           </div>
+
+          <label className="admin-full">
+            Image URLs (optional, one per line)
+            <textarea
+              rows={3}
+              placeholder={"https://example.com/front.jpg\nhttps://example.com/back.jpg\n(leave blank to use the emoji thumbnail)"}
+              value={imagesText}
+              onChange={(e) => setImagesText(e.target.value)}
+            />
+          </label>
 
           <label className="admin-full">
             Description

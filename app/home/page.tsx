@@ -29,9 +29,10 @@ const REVIEWS = [
 ];
 
 function ProductThumb({ product }: { product: Product }) {
+  const thumb = product.images?.[0];
   return (
     <div className="p-thumb">
-      {product.image ? <img src={product.image} alt={product.name} /> : product.emoji}
+      {thumb ? <img src={thumb} alt={product.name} /> : product.emoji}
       {product.badge && <span className={`badge ${product.badgeClass}`}>{product.badge}</span>}
     </div>
   );

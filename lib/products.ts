@@ -5,7 +5,7 @@ export interface Product {
   collection: string;
   price: number;
   emoji: string;
-  image?: string;
+  images?: string[];
   badge?: string;
   badgeClass?: string;
   status: string;
