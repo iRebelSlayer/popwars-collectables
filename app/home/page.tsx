@@ -134,6 +134,7 @@ export default function HomePage() {
       <main>
         <section className="hero">
           <div className="hero-copy">
+            <img className="hero-logo" src="/logo-transparent.png" alt="Popwars Collectables" />
             <p className="eyebrow">Every Shelf Tells a Story</p>
             <h1>The Vault is Open</h1>
             <p>Funko Pops, anime figures, and 3D prints — claimed one traveler at a time.</p>

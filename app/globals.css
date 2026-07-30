@@ -157,6 +157,7 @@ button, input, select, textarea { font: inherit; }
 
 .hero { max-width: 1120px; margin: 0 auto; padding: 48px 18px 26px; }
 .hero-copy { background: linear-gradient(145deg, rgba(255,255,255,.72), rgba(236,227,209,.92)); border: 1px solid rgba(19,17,16,.08); border-radius: 24px; padding: 28px 20px; text-align: center; box-shadow: 0 12px 36px rgba(19,17,16,.08); }
+.hero-logo { display: block; width: min(560px, 90%); height: auto; margin: 0 auto 12px; }
 .hero .eyebrow { font-family: 'Cinzel', serif; font-size: .72rem; letter-spacing: .28em; color: var(--blood); text-transform: uppercase; margin-bottom: 8px; }
 .hero h1 { font-family: 'Cinzel', serif; font-weight: 700; font-size: clamp(2rem, 6vw, 3.4rem); margin-bottom: 10px; }
 .hero p { color: #4e463e; font-size: .95rem; max-width: 620px; margin: 0 auto 18px; }
