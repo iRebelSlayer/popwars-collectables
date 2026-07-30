@@ -3,10 +3,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { products as baseProducts, Product } from "@/lib/products";
-import { getAllProducts } from "@/lib/customProducts";
+import { Product } from "@/lib/products";
+import { getAllProducts } from "@/lib/productsApi";
 import { Review } from "@/lib/reviews";
-import { getAllReviews } from "@/lib/customReviews";
+import { getAllReviews } from "@/lib/reviewsApi";
 import { openWhatsAppOrder } from "@/lib/whatsapp";
 
 const CATEGORY_CARDS = [
@@ -39,7 +39,8 @@ function ProductThumb({ product }: { product: Product }) {
 
 export default function HomePage() {
   const router = useRouter();
-  const [allProducts, setAllProducts] = useState<Product[]>(baseProducts);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("");
   const [activeChip, setActiveChip] = useState("");
   const [page, setPage] = useState(1);
@@ -47,11 +48,11 @@ export default function HomePage() {
   const productsSectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // One-time hydration from localStorage (unavailable during server render), merging in admin-added products.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setAllProducts(getAllProducts());
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setReviews(getAllReviews());
+    Promise.all([getAllProducts(), getAllReviews()]).then(([products, fetchedReviews]) => {
+      setAllProducts(products);
+      setReviews(fetchedReviews);
+      setLoading(false);
+    });
   }, []);
 
   const filteredProducts = useMemo(() => {
@@ -188,7 +189,10 @@ export default function HomePage() {
             <p>Instantly filtered for your current obsession.</p>
           </div>
           <div className="product-grid">
-            {filteredProducts.length === 0 && (
+            {loading && (
+              <p className="section-head" style={{ gridColumn: "1 / -1" }}>Loading the vault…</p>
+            )}
+            {!loading && filteredProducts.length === 0 && (
               <p className="section-head" style={{ gridColumn: "1 / -1" }}>No collectables match your search yet.</p>
             )}
             {pagedProducts.map((product) => (

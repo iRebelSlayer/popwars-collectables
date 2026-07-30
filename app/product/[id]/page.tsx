@@ -3,19 +3,21 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { products as baseProducts, Product } from "@/lib/products";
-import { getAllProducts } from "@/lib/customProducts";
+import { Product } from "@/lib/products";
+import { getAllProducts } from "@/lib/productsApi";
 import { openWhatsAppOrder } from "@/lib/whatsapp";
 
 export default function ProductPage() {
   const params = useParams<{ id: string }>();
-  const [allProducts, setAllProducts] = useState<Product[]>(baseProducts);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState(0);
 
   useEffect(() => {
-    // One-time hydration from localStorage (unavailable during server render), merging in admin-added products.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setAllProducts(getAllProducts());
+    getAllProducts().then((products) => {
+      setAllProducts(products);
+      setLoading(false);
+    });
   }, []);
 
   const product = allProducts.find((entry) => entry.id === params.id) || allProducts[0];
@@ -28,6 +30,7 @@ export default function ProductPage() {
     setActiveImage(0);
   }, [product?.id]);
 
+  if (loading) return null;
   if (!product) return null;
 
   return (

@@ -12,6 +12,3 @@ export interface Product {
   statusClass: string;
   description: string;
 }
-
-// Sample catalog removed — real products are added via /admin and exported into this file.
-export const products: Product[] = [];

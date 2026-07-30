@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { products as baseProducts, Product } from "@/lib/products";
-import { getCustomProducts, saveCustomProducts } from "@/lib/customProducts";
+import type { Session } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabase";
+import { Product } from "@/lib/products";
+import { getAllProducts, addProduct, removeProduct } from "@/lib/productsApi";
 import { Review } from "@/lib/reviews";
-import { getCustomReviews, saveCustomReviews } from "@/lib/customReviews";
+import { getAllReviews, addReview, removeReview } from "@/lib/reviewsApi";
 
-const ADMIN_PASSCODE = "iRebelPacman@123";
-const ADMIN_UNLOCKED_KEY = "popwars-admin-unlocked";
 const DEFAULT_EMOJI = "📦";
 
 const BADGE_CLASS_BY_LABEL: Record<string, string> = {
@@ -40,7 +40,7 @@ function slugify(text: string) {
   return text.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
-function ProductCard({ product, onRemove }: { product: Product; onRemove?: () => void }) {
+function ProductCard({ product, onRemove }: { product: Product; onRemove: () => void }) {
   const thumb = product.images?.[0];
   return (
     <article className="p-card">
@@ -53,11 +53,9 @@ function ProductCard({ product, onRemove }: { product: Product; onRemove?: () =>
         <div className="name">{product.name}</div>
         <div className="price">₹{Number(product.price).toLocaleString("en-IN")}</div>
         <div className="meta">{product.category} · {product.collection}</div>
-        {onRemove && (
-          <div className="p-actions">
-            <button className="btn btn-secondary" type="button" onClick={onRemove}>Remove</button>
-          </div>
-        )}
+        <div className="p-actions">
+          <button className="btn btn-secondary" type="button" onClick={onRemove}>Remove</button>
+        </div>
       </div>
     </article>
   );
@@ -80,16 +78,19 @@ function ReviewCard({ review, onRemove }: { review: Review; onRemove: () => void
 }
 
 export default function AdminPage() {
-  const [unlocked, setUnlocked] = useState(false);
-  const [passcodeInput, setPasscodeInput] = useState("");
-  const [lockError, setLockError] = useState("");
+  const [session, setSession] = useState<Session | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const [loggingIn, setLoggingIn] = useState(false);
   const [activeTab, setActiveTab] = useState<"product" | "review">("product");
 
-  const [customProducts, setCustomProducts] = useState<Product[]>([]);
-  const [exportText, setExportText] = useState("");
+  const [dataLoading, setDataLoading] = useState(false);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [formError, setFormError] = useState("");
 
-  const [customReviews, setCustomReviews] = useState<Review[]>([]);
-  const [reviewExportText, setReviewExportText] = useState("");
   const [reviewImage, setReviewImage] = useState("");
   const [reviewCaption, setReviewCaption] = useState("");
 
@@ -104,55 +105,59 @@ export default function AdminPage() {
   const [description, setDescription] = useState("");
 
   useEffect(() => {
-    // One-time read of a browser-only API (sessionStorage) to restore the unlocked state; no external subscription to set up.
-    if (sessionStorage.getItem(ADMIN_UNLOCKED_KEY) === "true") {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setUnlocked(true);
-    }
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+      setAuthChecked(true);
+    });
+    const { data: subscription } = supabase.auth.onAuthStateChange((_event, newSession) => {
+      setSession(newSession);
+    });
+    return () => subscription.subscription.unsubscribe();
   }, []);
 
   useEffect(() => {
-    // One-time hydration from localStorage once unlocked; no external subscription to maintain.
-    if (unlocked) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setCustomProducts(getCustomProducts());
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setCustomReviews(getCustomReviews());
-    }
-  }, [unlocked]);
+    if (!session) return;
+    // Fetch products/reviews from Supabase once logged in; not a render-derived value, so a plain effect is correct here.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setDataLoading(true);
+    Promise.all([getAllProducts(), getAllReviews()]).then(([p, r]) => {
+      setProducts(p);
+      setReviews(r);
+      setDataLoading(false);
+    });
+  }, [session]);
 
-  function handleUnlock(e: React.FormEvent) {
+  async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
-    if (passcodeInput === ADMIN_PASSCODE) {
-      sessionStorage.setItem(ADMIN_UNLOCKED_KEY, "true");
-      setLockError("");
-      setUnlocked(true);
-    } else {
-      setLockError("Incorrect passcode.");
-      setPasscodeInput("");
+    setLoggingIn(true);
+    setLoginError("");
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    setLoggingIn(false);
+    if (error) {
+      setLoginError(error.message);
+      setPassword("");
     }
   }
 
-  function handleLock() {
-    sessionStorage.removeItem(ADMIN_UNLOCKED_KEY);
-    setUnlocked(false);
-    setPasscodeInput("");
+  async function handleLogout() {
+    await supabase.auth.signOut();
   }
 
-  function handleRemove(id: string) {
-    const remaining = customProducts.filter((product) => product.id !== id);
-    saveCustomProducts(remaining);
-    setCustomProducts(remaining);
+  async function handleRemove(id: string) {
+    const { error } = await removeProduct(id);
+    if (error) { setFormError(error); return; }
+    setProducts((prev) => prev.filter((product) => product.id !== id));
   }
 
-  function handleRemoveReview(id: string) {
-    const remaining = customReviews.filter((review) => review.id !== id);
-    saveCustomReviews(remaining);
-    setCustomReviews(remaining);
+  async function handleRemoveReview(id: string) {
+    const { error } = await removeReview(id);
+    if (error) { setFormError(error); return; }
+    setReviews((prev) => prev.filter((review) => review.id !== id));
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setFormError("");
     const collection = genre === "other" ? genreOther.trim() : genre;
     const priceNum = Number(price);
     if (!name.trim() || !collection || !priceNum) return;
@@ -177,9 +182,9 @@ export default function AdminPage() {
       description: description.trim() || "A hand-picked addition to the vault.",
     };
 
-    const updated = [...customProducts, product];
-    saveCustomProducts(updated);
-    setCustomProducts(updated);
+    const { error } = await addProduct(product);
+    if (error) { setFormError(error); return; }
+    setProducts((prev) => [product, ...prev]);
 
     setName("");
     setPrice("");
@@ -191,8 +196,9 @@ export default function AdminPage() {
     setGenreOther("");
   }
 
-  function handleReviewSubmit(e: React.FormEvent) {
+  async function handleReviewSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setFormError("");
     const image = reviewImage.trim();
     if (!image) return;
 
@@ -202,84 +208,45 @@ export default function AdminPage() {
       caption: reviewCaption.trim() || undefined,
     };
 
-    const updated = [...customReviews, review];
-    saveCustomReviews(updated);
-    setCustomReviews(updated);
+    const { error } = await addReview(review);
+    if (error) { setFormError(error); return; }
+    setReviews((prev) => [review, ...prev]);
 
     setReviewImage("");
     setReviewCaption("");
   }
 
-  function downloadFile(fileText: string, filename: string) {
-    const blob = new Blob([fileText], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  }
+  if (!authChecked) return null;
 
-  function handleExport() {
-    const all = [...baseProducts, ...customProducts];
-    const entries = all.map((product) => JSON.stringify(product, null, 2)).join(",\n");
-    const fileText = `export interface Product {
-  id: string;
-  name: string;
-  category: string;
-  collection: string;
-  price: number;
-  emoji: string;
-  images?: string[];
-  badge?: string;
-  badgeClass?: string;
-  status: string;
-  statusClass: string;
-  description: string;
-}
-
-export const products: Product[] = [\n${entries}\n];\n`;
-    setExportText(fileText);
-    downloadFile(fileText, "products.ts");
-  }
-
-  function handleReviewExport() {
-    const all = [...customReviews];
-    const entries = all.map((review) => JSON.stringify(review, null, 2)).join(",\n");
-    const fileText = `export interface Review {
-  id: string;
-  image: string;
-  caption?: string;
-}
-
-export const reviews: Review[] = [\n${entries}\n];\n`;
-    setReviewExportText(fileText);
-    downloadFile(fileText, "reviews.ts");
-  }
-
-  if (!unlocked) {
+  if (!session) {
     return (
       <div className="admin-lock">
         <div className="admin-lock-card">
           <p className="eyebrow">Popwars Admin</p>
-          <h1>Enter Passcode</h1>
-          <p className="admin-note">
-            This is a local screen lock only — it lives in this page&apos;s code and is not real security. Do not rely on it
-            to protect the page if this site is hosted publicly without further protection.
-          </p>
-          <form className="lock-form" onSubmit={handleUnlock}>
+          <h1>Log In</h1>
+          <p className="admin-note">Sign in with your Popwars admin account to manage products and reviews.</p>
+          <form className="lock-form" onSubmit={handleLogin} style={{ flexDirection: "column", gap: 10 }}>
+            <input
+              type="email"
+              placeholder="Email"
+              autoComplete="username"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
             <input
               type="password"
-              placeholder="Passcode"
-              autoComplete="off"
-              value={passcodeInput}
-              onChange={(e) => setPasscodeInput(e.target.value)}
+              placeholder="Password"
+              autoComplete="current-password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
-            <button className="btn btn-primary" type="submit">Unlock</button>
+            <button className="btn btn-primary" type="submit" disabled={loggingIn}>
+              {loggingIn ? "Logging in…" : "Log In"}
+            </button>
           </form>
-          <p className="admin-error">{lockError}</p>
+          <p className="admin-error">{loginError}</p>
         </div>
       </div>
     );
@@ -292,7 +259,7 @@ export const reviews: Review[] = [\n${entries}\n];\n`;
           <a className="brand" href="/home">POPWARS</a>
           <div className="nav-actions">
             <a className="nav-pill" href="/home">Back to Shop</a>
-            <button className="replay" type="button" onClick={handleLock}>Lock</button>
+            <button className="replay" type="button" onClick={handleLogout}>Log Out</button>
           </div>
         </nav>
       </header>
@@ -306,6 +273,7 @@ export const reviews: Review[] = [\n${entries}\n];\n`;
             Review
           </button>
         </div>
+        {formError && <p className="admin-error">{formError}</p>}
       </div>
 
       {activeTab === "product" && (
@@ -313,7 +281,7 @@ export const reviews: Review[] = [\n${entries}\n];\n`;
       <main className="section admin-main">
         <div className="section-head">
           <h2>Add a Product</h2>
-          <p>New products are saved to this browser and merged live into the shop while you work.</p>
+          <p>Saved straight to the live database — shows up for every visitor, on any device, immediately.</p>
         </div>
 
         <form className="admin-form" onSubmit={handleSubmit}>
@@ -398,43 +366,13 @@ export const reviews: Review[] = [\n${entries}\n];\n`;
 
       <section className="section">
         <div className="section-head">
-          <h2>Your Added Products</h2>
-          <p>Stored locally in this browser. Export below to make them live for every visitor.</p>
+          <h2>All Products</h2>
+          <p>{dataLoading ? "Loading…" : `${products.length} product${products.length === 1 ? "" : "s"} live on the site.`}</p>
         </div>
         <div className="admin-list">
-          {customProducts.length === 0 && <p className="admin-note">No products added yet — use the form above.</p>}
-          {customProducts.map((product) => (
+          {!dataLoading && products.length === 0 && <p className="admin-note">No products yet — use the form above.</p>}
+          {products.map((product) => (
             <ProductCard key={product.id} product={product} onRemove={() => handleRemove(product.id)} />
-          ))}
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="section-head">
-          <h2>Export to products.ts</h2>
-          <p>
-            Additions above only appear in this browser until they&apos;re published. Download the file below and replace{" "}
-            <code>lib/products.ts</code> in the project, then redeploy the site.
-          </p>
-        </div>
-        <button className="btn btn-secondary" type="button" onClick={handleExport}>Download updated products.ts</button>
-        <textarea
-          className="admin-export"
-          readOnly
-          rows={10}
-          value={exportText}
-          placeholder="Click 'Download updated products.ts' to also preview the file contents here for copy-paste."
-        />
-      </section>
-
-      <section className="section">
-        <div className="section-head">
-          <h2>Base Catalog (reference)</h2>
-          <p>Built into the site&apos;s code. Edit these directly in <code>lib/products.ts</code> — not manageable from here.</p>
-        </div>
-        <div className="admin-list admin-list-readonly">
-          {baseProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       </section>
@@ -477,33 +415,15 @@ export const reviews: Review[] = [\n${entries}\n];\n`;
 
       <section className="section">
         <div className="section-head">
-          <h2>Your Added Reviews</h2>
-          <p>Stored locally in this browser. Export below to make them live for every visitor.</p>
+          <h2>All Reviews</h2>
+          <p>{dataLoading ? "Loading…" : `${reviews.length} review${reviews.length === 1 ? "" : "s"} live on the site.`}</p>
         </div>
         <div className="admin-list">
-          {customReviews.length === 0 && <p className="admin-note">No reviews added yet — use the form above.</p>}
-          {customReviews.map((review) => (
+          {!dataLoading && reviews.length === 0 && <p className="admin-note">No reviews yet — use the form above.</p>}
+          {reviews.map((review) => (
             <ReviewCard key={review.id} review={review} onRemove={() => handleRemoveReview(review.id)} />
           ))}
         </div>
-      </section>
-
-      <section className="section">
-        <div className="section-head">
-          <h2>Export to reviews.ts</h2>
-          <p>
-            Additions above only appear in this browser until they&apos;re published. Download the file below and replace{" "}
-            <code>lib/reviews.ts</code> in the project, then redeploy the site.
-          </p>
-        </div>
-        <button className="btn btn-secondary" type="button" onClick={handleReviewExport}>Download updated reviews.ts</button>
-        <textarea
-          className="admin-export"
-          readOnly
-          rows={10}
-          value={reviewExportText}
-          placeholder="Click 'Download updated reviews.ts' to also preview the file contents here for copy-paste."
-        />
       </section>
       </>
       )}
