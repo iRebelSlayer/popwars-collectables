@@ -19,7 +19,7 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { background: var(--ink); color: var(--bone); font-family: 'Inter', sans-serif; overflow-x: hidden; }
-body { background: linear-gradient(180deg, rgba(122,31,36,.03), transparent 30%), var(--bone); }
+body { background: url('/wallpaper-transparent.png') repeat, linear-gradient(180deg, rgba(122,31,36,.03), transparent 30%), var(--bone); background-size: 480px 320px, auto, auto; }
 a { color: inherit; text-decoration: none; }
 button, input, select, textarea { font: inherit; }
 
@@ -31,7 +31,8 @@ button, input, select, textarea { font: inherit; }
   width: 100%;
   height: 100vh;
   min-height: 640px;
-  background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 55%, var(--sky-low) 100%);
+  background: url('/wallpaper-transparent.png') repeat, linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 55%, var(--sky-low) 100%);
+  background-size: 480px 320px, auto;
   overflow: hidden;
   display: flex;
   align-items: flex-end;
@@ -143,7 +144,7 @@ button, input, select, textarea { font: inherit; }
 @keyframes boltTravel { 0% { opacity: 0; transform: translateX(-50%) scaleY(0); } 8% { opacity: 1; } 55% { transform: translateX(-50%) scaleY(1); opacity: 1; } 75% { transform: translateX(-50%) scaleY(1); opacity: 1; } 100% { transform: translateX(-50%) scaleY(1); opacity: 0; } }
 
 /* ===== Shop pages ===== */
-#homepage { min-height: 100vh; color: var(--ink); background: var(--bone); }
+#homepage { min-height: 100vh; color: var(--ink); background: url('/wallpaper-transparent.png') repeat, var(--bone); background-size: 480px 320px, auto; }
 
 .site-header { padding: 14px 16px 0; }
 .nav { position: sticky; top: 14px; z-index: 20; margin: 0 auto; width: min(1120px, 100%); display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 18px; border-radius: 40px; background: rgba(236,227,209,.74); backdrop-filter: blur(14px); border: 1px solid rgba(19,17,16,.08); box-shadow: 0 8px 24px rgba(19,17,16,.08); }
@@ -231,7 +232,7 @@ button, input, select, textarea { font: inherit; }
 .status-pill.limited { background: rgba(193,68,46,.16); color: var(--ember); }
 .status-pill.preorder { background: rgba(201,162,39,.2); color: var(--ink); }
 
-.product-page { padding: 26px 18px 60px; max-width: 1120px; margin: 0 auto; color: var(--ink); background: var(--bone); min-height: 100vh; }
+.product-page { padding: 26px 18px 60px; max-width: 1120px; margin: 0 auto; color: var(--ink); background: url('/wallpaper-transparent.png') repeat, var(--bone); background-size: 480px 320px, auto; min-height: 100vh; }
 .product-hero { display: grid; grid-template-columns: 1.1fr .9fr; gap: 24px; align-items: center; background: rgba(255,255,255,.86); border-radius: 24px; padding: 24px; box-shadow: 0 10px 30px rgba(19,17,16,.09); }
 .product-gallery { min-height: 300px; border-radius: 20px; background: linear-gradient(150deg, #efe4c4, #d9c7a1); display: flex; align-items: center; justify-content: center; font-size: 4rem; overflow: hidden; }
 .gallery-thumbs { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
@@ -264,7 +265,7 @@ button, input, select, textarea { font: inherit; }
 .lock-form input { flex: 1; border: 1px solid rgba(19,17,16,.15); border-radius: 999px; padding: 10px 16px; }
 .admin-error { color: var(--blood); font-size: .8rem; margin-top: 10px; min-height: 1em; }
 
-.admin-app { max-width: 1120px; margin: 0 auto; padding-bottom: 60px; color: var(--ink); background: var(--bone); min-height: 100vh; }
+.admin-app { max-width: 1120px; margin: 0 auto; padding-bottom: 60px; color: var(--ink); background: url('/wallpaper-transparent.png') repeat, var(--bone); background-size: 480px 320px, auto; min-height: 100vh; }
 .admin-main { padding-top: 20px; }
 .admin-form { background: rgba(255,255,255,.9); border-radius: 20px; padding: 20px; box-shadow: 0 10px 24px rgba(19,17,16,.08); display: flex; flex-direction: column; gap: 14px; }
 .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
