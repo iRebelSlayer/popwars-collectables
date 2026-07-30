@@ -251,12 +251,8 @@ button, input, select, textarea { font: inherit; }
 .btn-primary { background: var(--blood); color: var(--bone); }
 .btn-secondary { background: rgba(19,17,16,.06); color: var(--ink); }
 
-.coming-card, .community-card { background: linear-gradient(145deg, rgba(19,17,16,.95), rgba(122,31,36,.9)); color: var(--bone); border-radius: 24px; padding: 24px; display: grid; gap: 14px; }
-.coming-card .eyebrow, .community-card .eyebrow { font-family: 'Cinzel', serif; font-size: .72rem; letter-spacing: .28em; color: var(--gold); text-transform: uppercase; }
-.countdown { display: flex; gap: 8px; flex-wrap: wrap; }
-.countdown .unit { background: rgba(255,255,255,.1); padding: 10px 12px; border-radius: 12px; min-width: 64px; text-align: center; }
-.countdown .unit strong { display: block; font-size: 1rem; }
-.cta-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.community-card { background: linear-gradient(145deg, rgba(19,17,16,.95), rgba(122,31,36,.9)); color: var(--bone); border-radius: 24px; padding: 24px; display: grid; gap: 14px; }
+.community-card .eyebrow { font-family: 'Cinzel', serif; font-size: .72rem; letter-spacing: .28em; color: var(--gold); text-transform: uppercase; }
 .newsletter { display: flex; flex-wrap: wrap; gap: 10px; }
 .newsletter input { flex: 1; min-width: 220px; border-radius: 999px; border: none; padding: 10px 14px; }
 .newsletter button { background: var(--gold); color: var(--ink); border: none; border-radius: 999px; padding: 10px 16px; cursor: pointer; font-weight: 700; }

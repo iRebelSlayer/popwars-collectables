@@ -48,8 +48,6 @@ export default function HomePage() {
   const [activeChip, setActiveChip] = useState("");
   const [page, setPage] = useState(1);
   const [reviewIndex, setReviewIndex] = useState(0);
-  const [countdown, setCountdown] = useState<{ days: number; hours: number; mins: number } | null>(null);
-  const targetRef = useRef<Date | null>(null);
   const productsSectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -62,30 +60,6 @@ export default function HomePage() {
     const interval = setInterval(() => {
       setReviewIndex((i) => (i + 1) % REVIEWS.length);
     }, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    if (!targetRef.current) {
-      const target = new Date();
-      target.setDate(target.getDate() + 12);
-      target.setHours(18, 0, 0, 0);
-      targetRef.current = target;
-    }
-    const update = () => {
-      const diff = targetRef.current!.getTime() - Date.now();
-      if (diff <= 0) {
-        setCountdown({ days: 0, hours: 0, mins: 0 });
-        return;
-      }
-      setCountdown({
-        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-        mins: Math.floor((diff / (1000 * 60)) % 60),
-      });
-    };
-    update();
-    const interval = setInterval(update, 60000);
     return () => clearInterval(interval);
   }, []);
 
@@ -251,41 +225,6 @@ export default function HomePage() {
               <button type="button" disabled={page >= totalPages} onClick={() => goToPage(page + 1)}>Next →</button>
             </div>
           )}
-        </section>
-
-        <section className="section coming-soon">
-          <div className="coming-card">
-            <div>
-              <p className="eyebrow">Coming Soon</p>
-              <h2>New drops land every week.</h2>
-              <p>From limited-edition exclusives to sealed premium statues, the vault keeps opening.</p>
-            </div>
-            {countdown && (
-              <div className="countdown">
-                <div className="unit"><strong>{countdown.days}</strong><span>Days</span></div>
-                <div className="unit"><strong>{countdown.hours}</strong><span>Hours</span></div>
-                <div className="unit"><strong>{countdown.mins}</strong><span>Mins</span></div>
-              </div>
-            )}
-            <div className="cta-row">
-              <a className="btn btn-primary" href="https://chat.whatsapp.com/J1mwXMH6LH79bguu4PcaaM" target="_blank" rel="noopener">
-                Join WhatsApp Group
-              </a>
-              <button
-                className="btn btn-secondary"
-                type="button"
-                onClick={() =>
-                  window.open(
-                    "https://wa.me/919821318230?text=Hello%20Popwars%20Collectables%2C%20please%20notify%20me%20about%20upcoming%20drops.",
-                    "_blank",
-                    "noopener"
-                  )
-                }
-              >
-                Notify Me
-              </button>
-            </div>
-          </div>
         </section>
 
         <section className="section" id="reviews">
