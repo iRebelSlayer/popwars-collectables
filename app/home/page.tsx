@@ -23,6 +23,8 @@ const FRANCHISE_CHIPS = [
   "My Hero Academia",
 ];
 
+const PRODUCTS_PER_PAGE = 8;
+
 const REVIEWS = [
   { stars: "★★★★★", quote: "The packaging felt museum-grade and the product arrived exactly as promised.", author: "— Asha, Mumbai" },
   { stars: "★★★★★", quote: "The WhatsApp ordering flow is so smooth — I got my figure in a day.", author: "— Rohan, Pune" },
@@ -44,6 +46,7 @@ export default function HomePage() {
   const [allProducts, setAllProducts] = useState<Product[]>(baseProducts);
   const [filter, setFilter] = useState("");
   const [activeChip, setActiveChip] = useState("");
+  const [page, setPage] = useState(1);
   const [reviewIndex, setReviewIndex] = useState(0);
   const [countdown, setCountdown] = useState<{ days: number; hours: number; mins: number } | null>(null);
   const targetRef = useRef<Date | null>(null);
@@ -94,6 +97,20 @@ export default function HomePage() {
         .includes(needle)
     );
   }, [allProducts, filter]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE));
+  const pagedProducts = filteredProducts.slice((page - 1) * PRODUCTS_PER_PAGE, page * PRODUCTS_PER_PAGE);
+
+  useEffect(() => {
+    // Reset to page 1 whenever the search/filter changes so stale pagination doesn't hide results.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPage(1);
+  }, [filter]);
+
+  function goToPage(next: number) {
+    setPage(next);
+    productsSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 
   function applyFilter(value: string) {
     setFilter(value);
@@ -209,7 +226,7 @@ export default function HomePage() {
             {filteredProducts.length === 0 && (
               <p className="section-head" style={{ gridColumn: "1 / -1" }}>No collectables match your search yet.</p>
             )}
-            {filteredProducts.map((product) => (
+            {pagedProducts.map((product) => (
               <article className="p-card" key={product.id}>
                 <ProductThumb product={product} />
                 <div className="p-body">
@@ -227,6 +244,13 @@ export default function HomePage() {
               </article>
             ))}
           </div>
+          {filteredProducts.length > PRODUCTS_PER_PAGE && (
+            <div className="pagination">
+              <button type="button" disabled={page <= 1} onClick={() => goToPage(page - 1)}>← Prev</button>
+              <span className="page-status">Page {page} of {totalPages}</span>
+              <button type="button" disabled={page >= totalPages} onClick={() => goToPage(page + 1)}>Next →</button>
+            </div>
+          )}
         </section>
 
         <section className="section coming-soon">

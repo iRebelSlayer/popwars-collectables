@@ -6,6 +6,7 @@ import { getCustomProducts, saveCustomProducts } from "@/lib/customProducts";
 
 const ADMIN_PASSCODE = "iRebelPacman@123";
 const ADMIN_UNLOCKED_KEY = "popwars-admin-unlocked";
+const DEFAULT_EMOJI = "📦";
 
 const BADGE_CLASS_BY_LABEL: Record<string, string> = {
   New: "ash",
@@ -76,7 +77,6 @@ export default function AdminPage() {
   const [badge, setBadge] = useState("");
   const [status, setStatus] = useState("in-stock");
   const [imagesText, setImagesText] = useState("");
-  const [emoji, setEmoji] = useState("🎁");
   const [description, setDescription] = useState("");
 
   useEffect(() => {
@@ -134,7 +134,7 @@ export default function AdminPage() {
       category,
       collection,
       price: priceNum,
-      emoji: emoji.trim() || "🎁",
+      emoji: DEFAULT_EMOJI,
       images: images.length > 0 ? images : undefined,
       badge: badge || undefined,
       badgeClass: badge ? BADGE_CLASS_BY_LABEL[badge] : undefined,
@@ -152,7 +152,6 @@ export default function AdminPage() {
     setBadge("");
     setStatus("in-stock");
     setImagesText("");
-    setEmoji("🎁");
     setDescription("");
     setGenre(FRANCHISES[0]);
     setGenreOther("");
@@ -277,11 +276,6 @@ export default function AdminPage() {
                 <option value="preorder">Pre-order</option>
                 <option value="claimed">Claimed by another Traveler</option>
               </select>
-            </label>
-
-            <label>
-              Emoji Thumbnail
-              <input type="text" placeholder="🍥" value={emoji} onChange={(e) => setEmoji(e.target.value)} />
             </label>
           </div>
 
