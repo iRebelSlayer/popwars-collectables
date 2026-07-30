@@ -95,6 +95,16 @@ export default function ProductPage() {
           ))}
         </div>
       </section>
+
+      <a
+        className="wa-float"
+        href={`https://wa.me/919821318230?text=${encodeURIComponent(`Hello Popwars Collectables, I would like to know more about ${product.name}.`)}`}
+        target="_blank"
+        rel="noopener"
+        title="Order on WhatsApp"
+      >
+        💬
+      </a>
     </div>
   );
 }

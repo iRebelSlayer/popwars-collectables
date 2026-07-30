@@ -44,7 +44,6 @@ export default function HomePage() {
   const [activeChip, setActiveChip] = useState("");
   const [page, setPage] = useState(1);
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [reviewIndex, setReviewIndex] = useState(0);
   const productsSectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -54,14 +53,6 @@ export default function HomePage() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setReviews(getAllReviews());
   }, []);
-
-  useEffect(() => {
-    if (reviews.length === 0) return;
-    const interval = setInterval(() => {
-      setReviewIndex((i) => (i + 1) % reviews.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [reviews.length]);
 
   const filteredProducts = useMemo(() => {
     const needle = filter.toLowerCase();
@@ -233,23 +224,15 @@ export default function HomePage() {
               <h2>Collector Reviews</h2>
               <p>Trusted by first-time buyers and seasoned vault hunters.</p>
             </div>
-            <div className="review-slider">
-              <button className="slider-btn" type="button" aria-label="Previous review" onClick={() => setReviewIndex((i) => (i - 1 + reviews.length) % reviews.length)}>
-                ←
-              </button>
-              <div className="review-track">
-                {reviews.map((review, index) => (
-                  <article className={`review-card ${index === reviewIndex ? "active" : ""}`} key={review.id}>
-                    <div className="review-shot">
-                      <img src={review.image} alt={review.caption || "Collector review screenshot"} />
-                    </div>
+            <div className="review-marquee">
+              <div className="review-marquee-track">
+                {[...reviews, ...reviews].map((review, index) => (
+                  <article className="review-shot-card" key={`${review.id}-${index}`}>
+                    <img src={review.image} alt={review.caption || "Collector review screenshot"} />
                     {review.caption && <p className="review-caption">{review.caption}</p>}
                   </article>
                 ))}
               </div>
-              <button className="slider-btn" type="button" aria-label="Next review" onClick={() => setReviewIndex((i) => (i + 1) % reviews.length)}>
-                →
-              </button>
             </div>
           </section>
         )}
