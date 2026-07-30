@@ -105,7 +105,10 @@ export default function HomePage() {
     <div id="homepage">
       <header className="site-header">
         <nav className="nav">
-          <Link className="brand" href="/home">POPWARS</Link>
+          <Link className="brand" href="/home">
+            <img className="brand-icon" src="/logo-icon.png" alt="" />
+            POPWARS
+          </Link>
           <div className="links">
             <a href="#collections">Collections</a>
             <a href="#products">Products</a>
@@ -135,9 +138,8 @@ export default function HomePage() {
         <section className="hero">
           <div className="hero-copy">
             <img className="hero-logo" src="/logo-transparent.png" alt="Popwars Collectables" />
-            <p className="eyebrow">Every Shelf Tells a Story</p>
-            <h1>The Vault is Open</h1>
-            <p>Funko Pops, anime figures, and 3D prints — claimed one traveler at a time.</p>
+            <p className="hero-tagline">Every Shelf Tells a Story</p>
+            <p className="hero-description">Funko Pops, anime figures, and 3D prints — claimed one traveler at a time.</p>
             <form
               className="search"
               onSubmit={(e) => {
@@ -153,10 +155,10 @@ export default function HomePage() {
               />
               <button type="submit">Search</button>
             </form>
-            <div className="hero-highlights">
-              <span>⚡ Fast WhatsApp ordering</span>
-              <span>🏛 Museum-grade presentation</span>
-              <span>🧿 Collector-first drops</span>
+            <div className="trust-badges">
+              <span className="trust-badge">⚡ Fast WhatsApp Ordering</span>
+              <span className="trust-badge">📦 Secure Packaging</span>
+              <span className="trust-badge">⭐ Collector-First Service</span>
             </div>
           </div>
         </section>
