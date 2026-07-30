@@ -36,7 +36,7 @@ export default function ProductPage() {
         <Link className="brand" href="/home">POPWARS</Link>
         <div className="nav-actions">
           <Link className="nav-pill" href="/home">Back to Shop</Link>
-          <a className="nav-pill" href="https://wa.me/919821318230" target="_blank" rel="noopener">Order on WhatsApp</a>
+          <a className="nav-pill btn-whatsapp" href="https://wa.me/919821318230" target="_blank" rel="noopener">Order on WhatsApp</a>
         </div>
       </nav>
 
@@ -70,7 +70,7 @@ export default function ProductPage() {
           <p>{product.description}</p>
           <div className="price">₹{product.price.toLocaleString("en-IN")}</div>
           <div className="p-actions" style={{ marginTop: 16 }}>
-            <button className="btn btn-primary" type="button" onClick={() => openWhatsAppOrder(product.name, product.price)}>
+            <button className="btn btn-whatsapp" type="button" onClick={() => openWhatsAppOrder(product.name, product.price)}>
               Buy on WhatsApp
             </button>
             <Link className="btn btn-secondary" href="/home">Browse More</Link>

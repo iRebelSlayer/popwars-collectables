@@ -158,6 +158,8 @@ button, input, select, textarea { font: inherit; }
 .links a:hover { opacity: 1; }
 .nav-actions { display: flex; align-items: center; gap: 10px; }
 .nav-pill { font-size: .78rem; padding: 9px 12px; border-radius: 999px; border: 1px solid rgba(19,17,16,.12); background: rgba(255,255,255,.65); }
+.btn-whatsapp { background: #25D366; color: #fff; border-color: transparent; transition: background .2s ease, transform .2s ease; }
+.btn-whatsapp:hover { background: #1EBE5A; transform: translateY(-1px); }
 .replay { font-size: .76rem; background: var(--ink); color: var(--bone); border: none; padding: 9px 14px; border-radius: 20px; cursor: pointer; letter-spacing: .02em; }
 
 .hero { max-width: 1120px; margin: 0 auto; padding: 28px 18px 20px; }

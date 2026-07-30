@@ -111,7 +111,7 @@ export default function HomePage() {
             <a href="mailto:popwarscollectable@gmail.com">Contact</a>
           </div>
           <div className="nav-actions">
-            <a className="nav-pill" href="https://wa.me/919821318230?text=Hello%20Popwars%20Collectables%2C%20I%20would%20like%20to%20place%20an%20order." target="_blank" rel="noopener">
+            <a className="nav-pill btn-whatsapp" href="https://wa.me/919821318230?text=Hello%20Popwars%20Collectables%2C%20I%20would%20like%20to%20place%20an%20order." target="_blank" rel="noopener">
               Order on WhatsApp
             </a>
             <button
