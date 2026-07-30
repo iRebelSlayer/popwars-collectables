@@ -148,8 +148,11 @@ button, input, select, textarea { font: inherit; }
 
 .site-header { padding: 14px 16px 0; }
 .nav { position: sticky; top: 14px; z-index: 20; margin: 0 auto; width: min(1120px, 100%); display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 18px; border-radius: 40px; background: rgba(236,227,209,.74); backdrop-filter: blur(14px); border: 1px solid rgba(19,17,16,.08); box-shadow: 0 8px 24px rgba(19,17,16,.08); }
-.brand { display: inline-flex; align-items: center; gap: 8px; font-family: 'Anton', sans-serif; font-weight: 400; font-size: 1.25rem; letter-spacing: .06em; }
-.brand-icon { height: 30px; width: auto; display: block; }
+.brand { display: inline-flex; align-items: center; gap: 8px; }
+.brand-icon { height: 34px; width: auto; display: block; }
+.brand-text { display: flex; flex-direction: column; line-height: 1.05; }
+.brand-title { font-family: 'Anton', sans-serif; font-weight: 400; font-size: 1.2rem; letter-spacing: .06em; color: var(--ink); }
+.brand-subtitle { font-family: 'Cinzel', serif; font-weight: 600; font-size: .58rem; letter-spacing: .18em; text-transform: uppercase; color: var(--blood); }
 .links { display: none; gap: 16px; font-size: .82rem; letter-spacing: .02em; color: var(--ink); }
 .links a { opacity: .8; }
 .links a:hover { opacity: 1; }
@@ -175,7 +178,7 @@ button, input, select, textarea { font: inherit; }
   font-size: .92rem;
   letter-spacing: .12em;
   color: var(--blood);
-  margin: -14px 0 10px;
+  margin: 6px 0 10px;
 }
 .hero-description { color: #4e463e; font-size: .95rem; max-width: 520px; margin: 0 auto 14px; line-height: 1.5; }
 .search { max-width: 480px; margin: 0 auto 14px; display: flex; align-items: center; gap: 10px; background: #fff; border: 1px solid rgba(19,17,16,.12); border-radius: 999px; padding: 6px 8px 6px 18px; box-shadow: 0 8px 20px rgba(19,17,16,.05); transition: box-shadow .25s ease, border-color .25s ease; }

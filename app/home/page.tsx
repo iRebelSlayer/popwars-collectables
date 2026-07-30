@@ -107,7 +107,10 @@ export default function HomePage() {
         <nav className="nav">
           <Link className="brand" href="/home">
             <img className="brand-icon" src="/logo-icon.png" alt="" />
-            POPWARS
+            <span className="brand-text">
+              <span className="brand-title">POPWARS</span>
+              <span className="brand-subtitle">Collectables</span>
+            </span>
           </Link>
           <div className="links">
             <a href="#collections">Collections</a>
