@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { products as baseProducts, Product } from "@/lib/products";
 import { getCustomProducts, saveCustomProducts } from "@/lib/customProducts";
+import { Review } from "@/lib/reviews";
+import { getCustomReviews, saveCustomReviews } from "@/lib/customReviews";
 
 const ADMIN_PASSCODE = "iRebelPacman@123";
 const ADMIN_UNLOCKED_KEY = "popwars-admin-unlocked";
@@ -61,13 +63,35 @@ function ProductCard({ product, onRemove }: { product: Product; onRemove?: () =>
   );
 }
 
+function ReviewCard({ review, onRemove }: { review: Review; onRemove: () => void }) {
+  return (
+    <article className="p-card">
+      <div className="p-thumb">
+        <img src={review.image} alt={review.caption || "Review screenshot"} />
+      </div>
+      <div className="p-body">
+        {review.caption && <div className="name">{review.caption}</div>}
+        <div className="p-actions">
+          <button className="btn btn-secondary" type="button" onClick={onRemove}>Remove</button>
+        </div>
+      </div>
+    </article>
+  );
+}
+
 export default function AdminPage() {
   const [unlocked, setUnlocked] = useState(false);
   const [passcodeInput, setPasscodeInput] = useState("");
   const [lockError, setLockError] = useState("");
+  const [activeTab, setActiveTab] = useState<"product" | "review">("product");
 
   const [customProducts, setCustomProducts] = useState<Product[]>([]);
   const [exportText, setExportText] = useState("");
+
+  const [customReviews, setCustomReviews] = useState<Review[]>([]);
+  const [reviewExportText, setReviewExportText] = useState("");
+  const [reviewImage, setReviewImage] = useState("");
+  const [reviewCaption, setReviewCaption] = useState("");
 
   const [name, setName] = useState("");
   const [category, setCategory] = useState("Funko Pops");
@@ -89,8 +113,12 @@ export default function AdminPage() {
 
   useEffect(() => {
     // One-time hydration from localStorage once unlocked; no external subscription to maintain.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (unlocked) setCustomProducts(getCustomProducts());
+    if (unlocked) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setCustomProducts(getCustomProducts());
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setCustomReviews(getCustomReviews());
+    }
   }, [unlocked]);
 
   function handleUnlock(e: React.FormEvent) {
@@ -115,6 +143,12 @@ export default function AdminPage() {
     const remaining = customProducts.filter((product) => product.id !== id);
     saveCustomProducts(remaining);
     setCustomProducts(remaining);
+  }
+
+  function handleRemoveReview(id: string) {
+    const remaining = customReviews.filter((review) => review.id !== id);
+    saveCustomReviews(remaining);
+    setCustomReviews(remaining);
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -157,21 +191,72 @@ export default function AdminPage() {
     setGenreOther("");
   }
 
-  function handleExport() {
-    const all = [...baseProducts, ...customProducts];
-    const entries = all.map((product) => JSON.stringify(product, null, 2)).join(",\n");
-    const fileText = `window.popwarsProducts = [\n${entries}\n];\n`;
-    setExportText(fileText);
+  function handleReviewSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const image = reviewImage.trim();
+    if (!image) return;
 
-    const blob = new Blob([fileText], { type: "text/javascript" });
+    const review: Review = {
+      id: `review-${Date.now().toString(36)}`,
+      image,
+      caption: reviewCaption.trim() || undefined,
+    };
+
+    const updated = [...customReviews, review];
+    saveCustomReviews(updated);
+    setCustomReviews(updated);
+
+    setReviewImage("");
+    setReviewCaption("");
+  }
+
+  function downloadFile(fileText: string, filename: string) {
+    const blob = new Blob([fileText], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = "products.js";
+    link.download = filename;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+  }
+
+  function handleExport() {
+    const all = [...baseProducts, ...customProducts];
+    const entries = all.map((product) => JSON.stringify(product, null, 2)).join(",\n");
+    const fileText = `export interface Product {
+  id: string;
+  name: string;
+  category: string;
+  collection: string;
+  price: number;
+  emoji: string;
+  images?: string[];
+  badge?: string;
+  badgeClass?: string;
+  status: string;
+  statusClass: string;
+  description: string;
+}
+
+export const products: Product[] = [\n${entries}\n];\n`;
+    setExportText(fileText);
+    downloadFile(fileText, "products.ts");
+  }
+
+  function handleReviewExport() {
+    const all = [...customReviews];
+    const entries = all.map((review) => JSON.stringify(review, null, 2)).join(",\n");
+    const fileText = `export interface Review {
+  id: string;
+  image: string;
+  caption?: string;
+}
+
+export const reviews: Review[] = [\n${entries}\n];\n`;
+    setReviewExportText(fileText);
+    downloadFile(fileText, "reviews.ts");
   }
 
   if (!unlocked) {
@@ -212,6 +297,19 @@ export default function AdminPage() {
         </nav>
       </header>
 
+      <div className="section" style={{ paddingTop: 20 }}>
+        <div className="franchise-chips">
+          <button className={`chip ${activeTab === "product" ? "active" : ""}`} type="button" onClick={() => setActiveTab("product")}>
+            Product
+          </button>
+          <button className={`chip ${activeTab === "review" ? "active" : ""}`} type="button" onClick={() => setActiveTab("review")}>
+            Review
+          </button>
+        </div>
+      </div>
+
+      {activeTab === "product" && (
+      <>
       <main className="section admin-main">
         <div className="section-head">
           <h2>Add a Product</h2>
@@ -313,19 +411,19 @@ export default function AdminPage() {
 
       <section className="section">
         <div className="section-head">
-          <h2>Export to products.js</h2>
+          <h2>Export to products.ts</h2>
           <p>
             Additions above only appear in this browser until they&apos;re published. Download the file below and replace{" "}
-            <code>products.js</code> in the project, then redeploy the site.
+            <code>lib/products.ts</code> in the project, then redeploy the site.
           </p>
         </div>
-        <button className="btn btn-secondary" type="button" onClick={handleExport}>Download updated products.js</button>
+        <button className="btn btn-secondary" type="button" onClick={handleExport}>Download updated products.ts</button>
         <textarea
           className="admin-export"
           readOnly
           rows={10}
           value={exportText}
-          placeholder="Click 'Download updated products.js' to also preview the file contents here for copy-paste."
+          placeholder="Click 'Download updated products.ts' to also preview the file contents here for copy-paste."
         />
       </section>
 
@@ -340,6 +438,75 @@ export default function AdminPage() {
           ))}
         </div>
       </section>
+      </>
+      )}
+
+      {activeTab === "review" && (
+      <>
+      <main className="section admin-main">
+        <div className="section-head">
+          <h2>Add a Review</h2>
+          <p>Paste a link to the review screenshot — same as product images, no file upload.</p>
+        </div>
+
+        <form className="admin-form" onSubmit={handleReviewSubmit}>
+          <label className="admin-full">
+            Screenshot Image URL
+            <input
+              type="text"
+              required
+              placeholder="https://... (link to the review screenshot)"
+              value={reviewImage}
+              onChange={(e) => setReviewImage(e.target.value)}
+            />
+          </label>
+
+          <label className="admin-full">
+            Caption (optional)
+            <input
+              type="text"
+              placeholder="e.g. — Asha, Mumbai"
+              value={reviewCaption}
+              onChange={(e) => setReviewCaption(e.target.value)}
+            />
+          </label>
+
+          <button className="btn btn-primary" type="submit">Add Review</button>
+        </form>
+      </main>
+
+      <section className="section">
+        <div className="section-head">
+          <h2>Your Added Reviews</h2>
+          <p>Stored locally in this browser. Export below to make them live for every visitor.</p>
+        </div>
+        <div className="admin-list">
+          {customReviews.length === 0 && <p className="admin-note">No reviews added yet — use the form above.</p>}
+          {customReviews.map((review) => (
+            <ReviewCard key={review.id} review={review} onRemove={() => handleRemoveReview(review.id)} />
+          ))}
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="section-head">
+          <h2>Export to reviews.ts</h2>
+          <p>
+            Additions above only appear in this browser until they&apos;re published. Download the file below and replace{" "}
+            <code>lib/reviews.ts</code> in the project, then redeploy the site.
+          </p>
+        </div>
+        <button className="btn btn-secondary" type="button" onClick={handleReviewExport}>Download updated reviews.ts</button>
+        <textarea
+          className="admin-export"
+          readOnly
+          rows={10}
+          value={reviewExportText}
+          placeholder="Click 'Download updated reviews.ts' to also preview the file contents here for copy-paste."
+        />
+      </section>
+      </>
+      )}
     </div>
   );
 }

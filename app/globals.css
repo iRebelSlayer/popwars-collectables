@@ -259,9 +259,20 @@ button, input, select, textarea { font: inherit; }
 
 .review-slider { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; }
 .slider-btn { width: 42px; height: 42px; border-radius: 50%; border: 1px solid rgba(19,17,16,.12); background: rgba(255,255,255,.84); cursor: pointer; }
-.review-track { position: relative; min-height: 160px; }
-.review-card { display: none; background: rgba(255,255,255,.9); border-radius: 18px; padding: 18px; box-shadow: 0 10px 24px rgba(19,17,16,.08); }
-.review-card.active { display: block; }
+.review-track { position: relative; min-height: 480px; }
+.review-card { display: none; flex-direction: column; align-items: center; gap: 10px; }
+.review-card.active { display: flex; }
+.review-shot {
+  height: 460px;
+  max-width: 100%;
+  border-radius: 22px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 16px 36px rgba(19,17,16,.12);
+  border: 1px solid rgba(19,17,16,.08);
+}
+.review-shot img { display: block; height: 100%; width: auto; max-width: 100%; object-fit: contain; }
+.review-caption { font-size: .85rem; color: #5d564f; text-align: center; max-width: 320px; }
 .review-stars { color: var(--gold); letter-spacing: .2em; margin-bottom: 8px; }
 
 .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
@@ -296,6 +307,8 @@ button, input, select, textarea { font: inherit; }
   .product-hero { grid-template-columns: 1fr; }
   .review-slider { grid-template-columns: 1fr; }
   .slider-btn { display: none; }
+  .review-shot { height: 380px; }
+  .review-track { min-height: 400px; }
   .nav { flex-wrap: wrap; justify-content: center; }
   .brand { width: 100%; justify-content: center; }
   .nav-actions { width: 100%; justify-content: center; }

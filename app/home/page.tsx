@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { products as baseProducts, Product } from "@/lib/products";
 import { getAllProducts } from "@/lib/customProducts";
+import { Review } from "@/lib/reviews";
+import { getAllReviews } from "@/lib/customReviews";
 import { openWhatsAppOrder } from "@/lib/whatsapp";
 
 const CATEGORY_CARDS = [
@@ -25,12 +27,6 @@ const FRANCHISE_CHIPS = [
 
 const PRODUCTS_PER_PAGE = 8;
 
-const REVIEWS = [
-  { stars: "★★★★★", quote: "The packaging felt museum-grade and the product arrived exactly as promised.", author: "— Asha, Mumbai" },
-  { stars: "★★★★★", quote: "The WhatsApp ordering flow is so smooth — I got my figure in a day.", author: "— Rohan, Pune" },
-  { stars: "★★★★★", quote: "The curation feels premium, like walking through a private collectors’ vault.", author: "— Nisha, Bengaluru" },
-];
-
 function ProductThumb({ product }: { product: Product }) {
   const thumb = product.images?.[0];
   return (
@@ -47,6 +43,7 @@ export default function HomePage() {
   const [filter, setFilter] = useState("");
   const [activeChip, setActiveChip] = useState("");
   const [page, setPage] = useState(1);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [reviewIndex, setReviewIndex] = useState(0);
   const productsSectionRef = useRef<HTMLDivElement>(null);
 
@@ -54,14 +51,17 @@ export default function HomePage() {
     // One-time hydration from localStorage (unavailable during server render), merging in admin-added products.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setAllProducts(getAllProducts());
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setReviews(getAllReviews());
   }, []);
 
   useEffect(() => {
+    if (reviews.length === 0) return;
     const interval = setInterval(() => {
-      setReviewIndex((i) => (i + 1) % REVIEWS.length);
+      setReviewIndex((i) => (i + 1) % reviews.length);
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [reviews.length]);
 
   const filteredProducts = useMemo(() => {
     const needle = filter.toLowerCase();
@@ -227,29 +227,32 @@ export default function HomePage() {
           )}
         </section>
 
-        <section className="section" id="reviews">
-          <div className="section-head">
-            <h2>Collector Reviews</h2>
-            <p>Trusted by first-time buyers and seasoned vault hunters.</p>
-          </div>
-          <div className="review-slider">
-            <button className="slider-btn" type="button" aria-label="Previous review" onClick={() => setReviewIndex((i) => (i - 1 + REVIEWS.length) % REVIEWS.length)}>
-              ←
-            </button>
-            <div className="review-track">
-              {REVIEWS.map((review, index) => (
-                <article className={`review-card ${index === reviewIndex ? "active" : ""}`} key={review.author}>
-                  <div className="review-stars">{review.stars}</div>
-                  <p>“{review.quote}”</p>
-                  <strong>{review.author}</strong>
-                </article>
-              ))}
+        {reviews.length > 0 && (
+          <section className="section" id="reviews">
+            <div className="section-head">
+              <h2>Collector Reviews</h2>
+              <p>Trusted by first-time buyers and seasoned vault hunters.</p>
             </div>
-            <button className="slider-btn" type="button" aria-label="Next review" onClick={() => setReviewIndex((i) => (i + 1) % REVIEWS.length)}>
-              →
-            </button>
-          </div>
-        </section>
+            <div className="review-slider">
+              <button className="slider-btn" type="button" aria-label="Previous review" onClick={() => setReviewIndex((i) => (i - 1 + reviews.length) % reviews.length)}>
+                ←
+              </button>
+              <div className="review-track">
+                {reviews.map((review, index) => (
+                  <article className={`review-card ${index === reviewIndex ? "active" : ""}`} key={review.id}>
+                    <div className="review-shot">
+                      <img src={review.image} alt={review.caption || "Collector review screenshot"} />
+                    </div>
+                    {review.caption && <p className="review-caption">{review.caption}</p>}
+                  </article>
+                ))}
+              </div>
+              <button className="slider-btn" type="button" aria-label="Next review" onClick={() => setReviewIndex((i) => (i + 1) % reviews.length)}>
+                →
+              </button>
+            </div>
+          </section>
+        )}
 
         <section className="section" id="gallery">
           <div className="section-head">
