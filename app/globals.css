@@ -144,10 +144,10 @@ button, input, select, textarea { font: inherit; }
 @keyframes boltTravel { 0% { opacity: 0; transform: translateX(-50%) scaleY(0); } 8% { opacity: 1; } 55% { transform: translateX(-50%) scaleY(1); opacity: 1; } 75% { transform: translateX(-50%) scaleY(1); opacity: 1; } 100% { transform: translateX(-50%) scaleY(1); opacity: 0; } }
 
 /* ===== Shop pages ===== */
-#homepage { min-height: 100vh; color: var(--ink); background: url('/wallpaper-transparent.png') repeat, var(--bone); background-size: 480px 320px, auto; }
+#homepage { min-height: 100vh; color: var(--ink); background: url('/wallpaper-transparent.png') repeat, var(--bone); background-size: 480px 320px, auto; padding-top: 88px; }
 
-.site-header { padding: 14px 16px 0; }
-.nav { position: sticky; top: 14px; z-index: 20; margin: 0 auto; width: min(1120px, 100%); display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 18px; border-radius: 40px; background: rgba(236,227,209,.74); backdrop-filter: blur(14px); border: 1px solid rgba(19,17,16,.08); box-shadow: 0 8px 24px rgba(19,17,16,.08); }
+.site-header { padding: 0 16px; }
+.nav { position: fixed; top: 14px; left: 0; right: 0; z-index: 20; margin: 0 auto; width: min(1120px, 100%); display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 18px; border-radius: 40px; background: rgba(236,227,209,.9); backdrop-filter: blur(14px); border: 1px solid rgba(19,17,16,.08); box-shadow: 0 8px 24px rgba(19,17,16,.08); }
 .brand { display: inline-flex; align-items: center; gap: 8px; }
 .brand-icon { height: 34px; width: auto; display: block; }
 .brand-text { display: flex; flex-direction: column; line-height: 1.05; }
@@ -301,7 +301,7 @@ button, input, select, textarea { font: inherit; }
 .status-pill.limited { background: rgba(193,68,46,.16); color: var(--ember); }
 .status-pill.preorder { background: rgba(201,162,39,.2); color: var(--ink); }
 
-.product-page { color: var(--ink); background: url('/wallpaper-transparent.png') repeat, var(--bone); background-size: 480px 320px, auto; min-height: 100vh; padding-bottom: 40px; }
+.product-page { color: var(--ink); background: url('/wallpaper-transparent.png') repeat, var(--bone); background-size: 480px 320px, auto; min-height: 100vh; padding-bottom: 40px; padding-top: 88px; }
 .product-hero-wrap { max-width: 1120px; margin: 26px auto 0; padding: 0 18px; }
 .product-hero { display: grid; grid-template-columns: 1.1fr .9fr; gap: 24px; align-items: center; background: rgba(255,255,255,.86); border-radius: 24px; padding: 24px; box-shadow: 0 10px 30px rgba(19,17,16,.09); }
 .product-gallery { min-height: 300px; border-radius: 20px; background: linear-gradient(150deg, #efe4c4, #d9c7a1); display: flex; align-items: center; justify-content: center; font-size: 4rem; overflow: hidden; }
@@ -333,6 +333,7 @@ button, input, select, textarea { font: inherit; }
   .nav { flex-wrap: wrap; justify-content: center; }
   .brand { width: 100%; justify-content: center; }
   .nav-actions { width: 100%; justify-content: center; }
+  #homepage, .product-page, .admin-app { padding-top: 150px; }
 }
 @media (max-width: 640px) {
   .product-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
@@ -360,7 +361,7 @@ button, input, select, textarea { font: inherit; }
 .lock-form input { flex: 1; border: 1px solid rgba(19,17,16,.15); border-radius: 999px; padding: 10px 16px; }
 .admin-error { color: var(--blood); font-size: .8rem; margin-top: 10px; min-height: 1em; }
 
-.admin-app { padding-bottom: 60px; color: var(--ink); background: url('/wallpaper-transparent.png') repeat, var(--bone); background-size: 480px 320px, auto; min-height: 100vh; }
+.admin-app { padding-bottom: 60px; padding-top: 88px; color: var(--ink); background: url('/wallpaper-transparent.png') repeat, var(--bone); background-size: 480px 320px, auto; min-height: 100vh; }
 .admin-main { padding-top: 20px; }
 .admin-form { background: rgba(255,255,255,.9); border-radius: 20px; padding: 20px; box-shadow: 0 10px 24px rgba(19,17,16,.08); display: flex; flex-direction: column; gap: 14px; }
 .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
