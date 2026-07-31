@@ -1,4 +1,4 @@
-import Link from "next/link";
+import SiteNav from "@/components/SiteNav";
 
 export const metadata = {
   title: "About Us — Popwars Collectables",
@@ -8,18 +8,7 @@ export const metadata = {
 export default function AboutUsPage() {
   return (
     <div className="product-page">
-      <nav className="nav">
-        <Link className="brand" href="/home">
-          <img className="brand-icon" src="/logo-icon.png" alt="" />
-          <span className="brand-text">
-            <span className="brand-title">POPWARS</span>
-            <span className="brand-subtitle">Collectables</span>
-          </span>
-        </Link>
-        <div className="nav-actions">
-          <Link className="nav-pill" href="/home">Back to Shop</Link>
-        </div>
-      </nav>
+      <SiteNav />
 
       <div className="static-page-wrap">
         <div className="static-page-card">
@@ -28,37 +17,46 @@ export default function AboutUsPage() {
 
           <p>
             Popwars Collectables was built for one kind of person: the collector who remembers exactly
-            where they were when they found the piece that completed their shelf. We deal in Funko Pops,
-            anime figures, and 3D-printed collectables — the things that turn a room into a story worth
-            telling.
+            where they were when they found the piece that completed their shelf.
           </p>
 
           <p>
-            We work with the pieces fans actually chase — figures from Naruto, One Piece, Dragon Ball Z,
-            Demon Slayer, Jujutsu Kaisen, Attack on Titan, My Hero Academia, and beyond, alongside
-            exclusive and limited-run Funko Pops. Every item that reaches the vault is chosen because
-            we&apos;d want it on our own shelf first.
+            We deal in Funko Pops, anime figures, action figures, and premium 3D-printed collectables —
+            the kind of pieces that turn a room into a story worth telling.
+          </p>
+
+          <p>
+            Our vault is home to collectables from the worlds fans love most. Whether you&apos;re hunting
+            characters from <strong>Marvel, DC, Star Wars, Naruto, One Piece, Dragon Ball Z, Demon Slayer,
+            Jujutsu Kaisen, Attack on Titan, My Hero Academia</strong>, or many more universes, we focus on
+            bringing together figures that collectors genuinely want to own. From everyday favourites to
+            exclusives and limited releases, every item is carefully selected with collectors in mind.
           </p>
 
           <h2>What We Care About</h2>
+          <p>Presentation and trust.</p>
           <p>
-            Presentation and trust. Every order is packed the way we&apos;d want to receive one ourselves —
-            protected, careful, and worthy of what&apos;s inside. We&apos;d rather move a little slower and get a
-            box to you intact than rush it and gamble with your collection.
+            Every order is packed the way we&apos;d want to receive one ourselves — protected, carefully
+            secured, and worthy of what&apos;s inside. We&apos;d rather take a little extra time to ensure
+            your collectable arrives safely than rush a shipment and risk your collection.
           </p>
 
           <h2>How We Sell</h2>
+          <p>Popwars is built around a WhatsApp-first shopping experience.</p>
           <p>
-            Popwars runs on WhatsApp-first ordering. Browse the vault, message us about the piece you
-            want, and we&apos;ll walk you through availability, pricing, and delivery directly — no
-            impersonal checkout, just a real conversation with the people running the store.
+            Browse the vault, message us about the piece you&apos;re interested in, and we&apos;ll
+            personally guide you through availability, pricing, and delivery. No impersonal checkout, no
+            automated replies — just real conversations with fellow collectors who understand the hobby.
           </p>
 
           <h2>Join the Vault</h2>
           <p>
-            New drops, exclusives, and restocks get announced first to our WhatsApp community and
-            Instagram followers. If you want first access before a piece is claimed by another traveler,
-            that&apos;s where to be.
+            New arrivals, exclusive drops, limited releases, and restocks are always announced first
+            through our WhatsApp community and Instagram.
+          </p>
+          <p>
+            If you want the best chance of securing your next grail before it&apos;s gone, that&apos;s
+            where you&apos;ll want to be.
           </p>
 
           <div className="contact-methods">

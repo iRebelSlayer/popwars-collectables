@@ -1,4 +1,4 @@
-import Link from "next/link";
+import SiteNav from "@/components/SiteNav";
 
 export const metadata = {
   title: "Contact Us — Popwars Collectables",
@@ -8,18 +8,7 @@ export const metadata = {
 export default function ContactUsPage() {
   return (
     <div className="product-page">
-      <nav className="nav">
-        <Link className="brand" href="/home">
-          <img className="brand-icon" src="/logo-icon.png" alt="" />
-          <span className="brand-text">
-            <span className="brand-title">POPWARS</span>
-            <span className="brand-subtitle">Collectables</span>
-          </span>
-        </Link>
-        <div className="nav-actions">
-          <Link className="nav-pill" href="/home">Back to Shop</Link>
-        </div>
-      </nav>
+      <SiteNav />
 
       <div className="static-page-wrap">
         <div className="static-page-card">

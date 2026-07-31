@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import SiteNav from "@/components/SiteNav";
 import { Product } from "@/lib/products";
 import { getAllProducts } from "@/lib/productsApi";
 import { Review } from "@/lib/reviews";
@@ -38,7 +38,6 @@ function ProductThumb({ product }: { product: Product }) {
 }
 
 export default function HomePage() {
-  const router = useRouter();
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("");
@@ -87,37 +86,7 @@ export default function HomePage() {
   return (
     <div id="homepage">
       <header className="site-header">
-        <nav className="nav">
-          <Link className="brand" href="/home">
-            <img className="brand-icon" src="/logo-icon.png" alt="" />
-            <span className="brand-text">
-              <span className="brand-title">POPWARS</span>
-              <span className="brand-subtitle">Collectables</span>
-            </span>
-          </Link>
-          <div className="links">
-            <a href="#collections">Collections</a>
-            <a href="#products">Products</a>
-            <a href="#reviews">Reviews</a>
-            <a href="#community">Community</a>
-            <a href="mailto:popwarscollectable@gmail.com">Contact</a>
-          </div>
-          <div className="nav-actions">
-            <a className="nav-pill btn-whatsapp" href="https://wa.me/919821318230?text=Hello%20Popwars%20Collectables%2C%20I%20would%20like%20to%20place%20an%20order." target="_blank" rel="noopener">
-              Order on WhatsApp
-            </a>
-            <button
-              className="replay"
-              type="button"
-              onClick={() => {
-                localStorage.removeItem("popwars-intro-seen");
-                router.push("/");
-              }}
-            >
-              Replay Entrance
-            </button>
-          </div>
-        </nav>
+        <SiteNav />
       </header>
 
       <main>
