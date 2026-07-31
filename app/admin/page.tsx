@@ -256,7 +256,13 @@ export default function AdminPage() {
     <div className="admin-app">
       <header className="site-header">
         <nav className="nav">
-          <a className="brand" href="/home">POPWARS</a>
+          <a className="brand" href="/home">
+            <img className="brand-icon" src="/logo-icon.png" alt="" />
+            <span className="brand-text">
+              <span className="brand-title">POPWARS</span>
+              <span className="brand-subtitle">Collectables</span>
+            </span>
+          </a>
           <div className="nav-actions">
             <a className="nav-pill" href="/home">Back to Shop</a>
             <button className="replay" type="button" onClick={handleLogout}>Log Out</button>

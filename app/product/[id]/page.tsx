@@ -36,13 +36,20 @@ export default function ProductPage() {
   return (
     <div className="product-page">
       <nav className="nav">
-        <Link className="brand" href="/home">POPWARS</Link>
+        <Link className="brand" href="/home">
+          <img className="brand-icon" src="/logo-icon.png" alt="" />
+          <span className="brand-text">
+            <span className="brand-title">POPWARS</span>
+            <span className="brand-subtitle">Collectables</span>
+          </span>
+        </Link>
         <div className="nav-actions">
           <Link className="nav-pill" href="/home">Back to Shop</Link>
           <a className="nav-pill btn-whatsapp" href="https://wa.me/919821318230" target="_blank" rel="noopener">Order on WhatsApp</a>
         </div>
       </nav>
 
+      <div className="product-hero-wrap">
       <section className="product-hero">
         <div>
           <div className="product-gallery">
@@ -80,6 +87,7 @@ export default function ProductPage() {
           </div>
         </div>
       </section>
+      </div>
 
       <section className="section">
         <div className="section-head">
