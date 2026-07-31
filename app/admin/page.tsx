@@ -7,6 +7,8 @@ import { Product } from "@/lib/products";
 import { getAllProducts, addProduct, removeProduct } from "@/lib/productsApi";
 import { Review } from "@/lib/reviews";
 import { getAllReviews, addReview, removeReview } from "@/lib/reviewsApi";
+import { getAllPageContent, savePageContent } from "@/lib/pagesApi";
+import { PAGE_SLUGS, PAGE_LABELS, PAGE_DEFAULTS, PageSlug } from "@/lib/pageDefaults";
 
 const DEFAULT_EMOJI = "📦";
 
@@ -84,12 +86,18 @@ export default function AdminPage() {
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [loggingIn, setLoggingIn] = useState(false);
-  const [activeTab, setActiveTab] = useState<"product" | "review">("product");
+  const [activeTab, setActiveTab] = useState<"product" | "review" | "pages">("product");
 
   const [dataLoading, setDataLoading] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [formError, setFormError] = useState("");
+
+  const [activePageSlug, setActivePageSlug] = useState<PageSlug>(PAGE_SLUGS[0]);
+  const [pageContent, setPageContent] = useState<Record<string, string>>({});
+  const [pagesLoaded, setPagesLoaded] = useState(false);
+  const [pageSaving, setPageSaving] = useState(false);
+  const [pageSaved, setPageSaved] = useState(false);
 
   const [reviewImage, setReviewImage] = useState("");
   const [reviewCaption, setReviewCaption] = useState("");
@@ -126,6 +134,30 @@ export default function AdminPage() {
       setDataLoading(false);
     });
   }, [session]);
+
+  useEffect(() => {
+    if (!session || activeTab !== "pages" || pagesLoaded) return;
+    // Lazy-load page content the first time the admin opens the Pages tab.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPagesLoaded(true);
+    getAllPageContent([...PAGE_SLUGS]).then((result) => {
+      const merged: Record<string, string> = {};
+      PAGE_SLUGS.forEach((slug) => {
+        merged[slug] = result[slug] ?? PAGE_DEFAULTS[slug];
+      });
+      setPageContent(merged);
+    });
+  }, [session, activeTab, pagesLoaded]);
+
+  async function handleSavePage() {
+    setPageSaving(true);
+    setPageSaved(false);
+    setFormError("");
+    const { error } = await savePageContent(activePageSlug, pageContent[activePageSlug] ?? "");
+    setPageSaving(false);
+    if (error) { setFormError(error); return; }
+    setPageSaved(true);
+  }
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -277,6 +309,9 @@ export default function AdminPage() {
           </button>
           <button className={`chip ${activeTab === "review" ? "active" : ""}`} type="button" onClick={() => setActiveTab("review")}>
             Review
+          </button>
+          <button className={`chip ${activeTab === "pages" ? "active" : ""}`} type="button" onClick={() => setActiveTab("pages")}>
+            Pages
           </button>
         </div>
         {formError && <p className="admin-error">{formError}</p>}
@@ -432,6 +467,51 @@ export default function AdminPage() {
         </div>
       </section>
       </>
+      )}
+
+      {activeTab === "pages" && (
+      <main className="section admin-main">
+        <div className="section-head">
+          <h2>Edit Site Pages</h2>
+          <p>Update the text on About Us, Contact Us, Terms &amp; Conditions, and Privacy Policy — no code changes needed.</p>
+        </div>
+
+        <div className="franchise-chips">
+          {PAGE_SLUGS.map((slug) => (
+            <button
+              key={slug}
+              className={`chip ${activePageSlug === slug ? "active" : ""}`}
+              type="button"
+              onClick={() => { setActivePageSlug(slug); setPageSaved(false); }}
+            >
+              {PAGE_LABELS[slug]}
+            </button>
+          ))}
+        </div>
+
+        {!pagesLoaded || Object.keys(pageContent).length === 0 ? (
+          <p className="admin-note">Loading page content…</p>
+        ) : (
+          <div className="admin-form">
+            <label className="admin-full">
+              {PAGE_LABELS[activePageSlug]} Content (Markdown supported — blank lines start new paragraphs, ## for headings)
+              <textarea
+                rows={18}
+                value={pageContent[activePageSlug] ?? ""}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setPageContent((prev) => ({ ...prev, [activePageSlug]: value }));
+                  setPageSaved(false);
+                }}
+              />
+            </label>
+            <button className="btn btn-primary" type="button" onClick={handleSavePage} disabled={pageSaving}>
+              {pageSaving ? "Saving…" : "Save Page"}
+            </button>
+            {pageSaved && <p className="admin-note">Saved — live on the site now.</p>}
+          </div>
+        )}
+      </main>
       )}
     </div>
   );
