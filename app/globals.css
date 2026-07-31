@@ -314,6 +314,18 @@ button, input, select, textarea { font: inherit; }
 .product-meta { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0 16px; }
 .related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin-top: 16px; }
 
+.static-page-wrap { max-width: 820px; margin: 26px auto 0; padding: 0 18px 60px; }
+.static-page-card { background: rgba(255,255,255,.92); border-radius: 24px; padding: 32px; box-shadow: 0 10px 30px rgba(19,17,16,.08); }
+.static-page-card .eyebrow { font-family: 'Cinzel', serif; font-size: .72rem; letter-spacing: .28em; color: var(--blood); text-transform: uppercase; margin-bottom: 8px; }
+.static-page-card h1 { font-family: 'Cinzel', serif; font-size: 1.8rem; margin-bottom: 18px; }
+.static-page-card h2 { font-family: 'Cinzel', serif; font-size: 1.1rem; color: var(--blood); margin: 26px 0 8px; }
+.static-page-card p { color: #3d372f; line-height: 1.65; margin-bottom: 12px; }
+.static-page-card ul { margin: 0 0 12px 20px; color: #3d372f; line-height: 1.65; }
+.static-page-card li { margin-bottom: 6px; }
+.static-page-card a { color: var(--blood); text-decoration: underline; }
+.static-page-card .updated { font-size: .8rem; color: #8a8272; margin-bottom: 22px; }
+.contact-methods { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+
 @media (min-width: 760px) { .links { display: flex; } }
 @media (max-width: 760px) {
   .product-hero { grid-template-columns: 1fr; }
