@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function SiteNav() {
   const router = useRouter();
+  const pathname = usePathname();
+  const showReplay = pathname === "/home";
 
   return (
     <nav className="nav">
@@ -31,16 +33,18 @@ export default function SiteNav() {
         >
           Order on WhatsApp
         </a>
-        <button
-          className="replay"
-          type="button"
-          onClick={() => {
-            localStorage.removeItem("popwars-intro-seen");
-            router.push("/");
-          }}
-        >
-          Replay Entrance
-        </button>
+        {showReplay && (
+          <button
+            className="replay"
+            type="button"
+            onClick={() => {
+              localStorage.removeItem("popwars-intro-seen");
+              router.push("/");
+            }}
+          >
+            Replay Entrance
+          </button>
+        )}
       </div>
     </nav>
   );

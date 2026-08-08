@@ -71,3 +71,15 @@ export async function removeProduct(id: string): Promise<{ error: string | null 
   const { error } = await supabase.from('products').delete().eq('id', id);
   return { error: error?.message ?? null };
 }
+
+export async function updateProductStatus(
+  id: string,
+  status: string,
+  statusClass: string
+): Promise<{ error: string | null }> {
+  const { error } = await supabase
+    .from('products')
+    .update({ status, status_class: statusClass })
+    .eq('id', id);
+  return { error: error?.message ?? null };
+}

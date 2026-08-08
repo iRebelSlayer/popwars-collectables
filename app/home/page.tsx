@@ -3,11 +3,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import SiteNav from "@/components/SiteNav";
+import SiteFooter from "@/components/SiteFooter";
 import { Product } from "@/lib/products";
 import { getAllProducts } from "@/lib/productsApi";
 import { Review } from "@/lib/reviews";
 import { getAllReviews } from "@/lib/reviewsApi";
-import { openWhatsAppOrder } from "@/lib/whatsapp";
+import { addToCart } from "@/lib/cart";
 
 const CATEGORY_CARDS = [
   { label: "Funko Pops", filter: "Funko Pops", c1: "#7A1F24" },
@@ -174,8 +175,20 @@ export default function HomePage() {
                   <div className="meta">{product.category} · {product.collection}</div>
                   <div className="p-actions">
                     <Link className="btn btn-secondary" href={`/product/${product.id}`}>View</Link>
-                    <button className="btn btn-primary" type="button" onClick={() => openWhatsAppOrder(product.name, product.price)}>
-                      Buy Now
+                    <button
+                      className="btn btn-primary"
+                      type="button"
+                      disabled={product.statusClass === "sold-out"}
+                      onClick={() =>
+                        addToCart({
+                          id: product.id,
+                          name: product.name,
+                          price: product.price,
+                          image: product.images?.[0],
+                        })
+                      }
+                    >
+                      {product.statusClass === "sold-out" ? "Sold Out" : "Add to Cart"}
                     </button>
                   </div>
                 </div>
@@ -228,33 +241,21 @@ export default function HomePage() {
             <div>
               <p className="eyebrow">Community</p>
               <h2>Join the vault and get first access.</h2>
-              <p>Subscribe for new release alerts and collector stories straight to your inbox.</p>
+              <p>New drops, restocks, and collector stories are announced first on WhatsApp.</p>
             </div>
-            <form className="newsletter" onSubmit={(e) => e.preventDefault()}>
-              <input type="email" placeholder="Your email address" />
-              <button type="submit">Subscribe</button>
-            </form>
+            <a
+              className="btn btn-whatsapp"
+              href="https://chat.whatsapp.com/J1mwXMH6LH79bguu4PcaaM"
+              target="_blank"
+              rel="noopener"
+            >
+              Join WhatsApp Community
+            </a>
           </div>
         </section>
       </main>
 
-      <footer className="footer">
-        <div>
-          <strong>Popwars Collectables</strong>
-          <p>Every Shelf Tells a Story.</p>
-        </div>
-        <div>
-          <a href="https://www.instagram.com/popwars_collectables/" target="_blank" rel="noopener">Instagram</a>
-          <a href="https://chat.whatsapp.com/J1mwXMH6LH79bguu4PcaaM" target="_blank" rel="noopener">WhatsApp Community</a>
-          <a href="mailto:popwarscollectable@gmail.com">Email Support</a>
-        </div>
-        <div>
-          <Link href="/about-us">About Us</Link>
-          <Link href="/contact-us">Contact Us</Link>
-          <Link href="/terms-and-conditions">Terms &amp; Conditions</Link>
-          <Link href="/privacy-policy">Privacy Policy</Link>
-        </div>
-      </footer>
+      <SiteFooter />
 
       <a
         className="wa-float"

@@ -4,15 +4,18 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import SiteNav from "@/components/SiteNav";
+import SiteFooter from "@/components/SiteFooter";
 import { Product } from "@/lib/products";
 import { getAllProducts } from "@/lib/productsApi";
-import { openWhatsAppOrder } from "@/lib/whatsapp";
+import { addToCart } from "@/lib/cart";
+import { checkoutViaWhatsApp } from "@/lib/checkout";
 
 export default function ProductPage() {
   const params = useParams<{ id: string }>();
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState(0);
+  const [buying, setBuying] = useState(false);
 
   useEffect(() => {
     getAllProducts().then((products) => {
@@ -38,6 +41,7 @@ export default function ProductPage() {
     <div className="product-page">
       <SiteNav />
 
+      <main>
       <div className="product-hero-wrap">
       <section className="product-hero">
         <div>
@@ -69,8 +73,25 @@ export default function ProductPage() {
           <p>{product.description}</p>
           <div className="price">₹{product.price.toLocaleString("en-IN")}</div>
           <div className="p-actions" style={{ marginTop: 16 }}>
-            <button className="btn btn-whatsapp" type="button" onClick={() => openWhatsAppOrder(product.name, product.price)}>
-              Buy on WhatsApp
+            <button
+              className="btn btn-whatsapp"
+              type="button"
+              disabled={product.statusClass === "sold-out" || buying}
+              onClick={async () => {
+                setBuying(true);
+                await checkoutViaWhatsApp([{ id: product.id, name: product.name, price: product.price, image: images[0], qty: 1 }]);
+                setBuying(false);
+              }}
+            >
+              {product.statusClass === "sold-out" ? "Sold Out" : buying ? "Preparing…" : "Buy on WhatsApp"}
+            </button>
+            <button
+              className="btn btn-secondary"
+              type="button"
+              disabled={product.statusClass === "sold-out"}
+              onClick={() => addToCart({ id: product.id, name: product.name, price: product.price, image: images[0] })}
+            >
+              Add to Cart
             </button>
             <Link className="btn btn-secondary" href="/home">Browse More</Link>
           </div>
@@ -95,6 +116,9 @@ export default function ProductPage() {
           ))}
         </div>
       </section>
+      </main>
+
+      <SiteFooter />
 
       <a
         className="wa-float"

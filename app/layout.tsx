@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import CartWidget from "@/components/CartWidget";
 
 export const metadata: Metadata = {
   title: "Popwars Collectables — The Vault of Legends",
@@ -13,7 +14,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {children}
+        <CartWidget />
+      </body>
     </html>
   );
 }

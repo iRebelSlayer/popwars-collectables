@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 import { Product } from "@/lib/products";
-import { getAllProducts, addProduct, removeProduct } from "@/lib/productsApi";
+import { getAllProducts, addProduct, removeProduct, updateProductStatus } from "@/lib/productsApi";
 import { Review } from "@/lib/reviews";
 import { getAllReviews, addReview, removeReview } from "@/lib/reviewsApi";
 import { getAllPageContent, savePageContent } from "@/lib/pagesApi";
@@ -25,6 +25,7 @@ const STATUS_TEXT_BY_VALUE: Record<string, string> = {
   sealed: "🏛 Sealed in the Vault",
   preorder: "🛍 Pre-order",
   claimed: "⚡ Claimed by another Traveler",
+  "sold-out": "❌ Sold Out",
 };
 
 const FRANCHISES = [
@@ -42,8 +43,17 @@ function slugify(text: string) {
   return text.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
-function ProductCard({ product, onRemove }: { product: Product; onRemove: () => void }) {
+function ProductCard({
+  product,
+  onRemove,
+  onToggleSoldOut,
+}: {
+  product: Product;
+  onRemove: () => void;
+  onToggleSoldOut: () => void;
+}) {
   const thumb = product.images?.[0];
+  const isSoldOut = product.statusClass === "sold-out";
   return (
     <article className="p-card">
       <div className="p-thumb">
@@ -56,6 +66,9 @@ function ProductCard({ product, onRemove }: { product: Product; onRemove: () => 
         <div className="price">₹{Number(product.price).toLocaleString("en-IN")}</div>
         <div className="meta">{product.category} · {product.collection}</div>
         <div className="p-actions">
+          <button className="btn btn-secondary" type="button" onClick={onToggleSoldOut}>
+            {isSoldOut ? "Mark In Stock" : "Mark Sold Out"}
+          </button>
           <button className="btn btn-secondary" type="button" onClick={onRemove}>Remove</button>
         </div>
       </div>
@@ -179,6 +192,16 @@ export default function AdminPage() {
     const { error } = await removeProduct(id);
     if (error) { setFormError(error); return; }
     setProducts((prev) => prev.filter((product) => product.id !== id));
+  }
+
+  async function handleToggleSoldOut(product: Product) {
+    const nextClass = product.statusClass === "sold-out" ? "in-stock" : "sold-out";
+    const nextStatus = STATUS_TEXT_BY_VALUE[nextClass];
+    const { error } = await updateProductStatus(product.id, nextStatus, nextClass);
+    if (error) { setFormError(error); return; }
+    setProducts((prev) =>
+      prev.map((p) => (p.id === product.id ? { ...p, status: nextStatus, statusClass: nextClass } : p))
+    );
   }
 
   async function handleRemoveReview(id: string) {
@@ -382,6 +405,7 @@ export default function AdminPage() {
                 <option value="sealed">Sealed in the Vault</option>
                 <option value="preorder">Pre-order</option>
                 <option value="claimed">Claimed by another Traveler</option>
+                <option value="sold-out">Sold Out</option>
               </select>
             </label>
           </div>
@@ -413,7 +437,12 @@ export default function AdminPage() {
         <div className="admin-list">
           {!dataLoading && products.length === 0 && <p className="admin-note">No products yet — use the form above.</p>}
           {products.map((product) => (
-            <ProductCard key={product.id} product={product} onRemove={() => handleRemove(product.id)} />
+            <ProductCard
+              key={product.id}
+              product={product}
+              onRemove={() => handleRemove(product.id)}
+              onToggleSoldOut={() => handleToggleSoldOut(product)}
+            />
           ))}
         </div>
       </section>

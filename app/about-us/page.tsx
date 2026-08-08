@@ -1,5 +1,6 @@
 import ReactMarkdown from "react-markdown";
 import SiteNav from "@/components/SiteNav";
+import SiteFooter from "@/components/SiteFooter";
 import { getPageContent } from "@/lib/pagesApi";
 import { PAGE_DEFAULTS } from "@/lib/pageDefaults";
 
@@ -17,6 +18,7 @@ export default async function AboutUsPage() {
     <div className="product-page">
       <SiteNav />
 
+      <main>
       <div className="static-page-wrap">
         <div className="static-page-card">
           <p className="eyebrow">Our Story</p>
@@ -34,6 +36,9 @@ export default async function AboutUsPage() {
           </div>
         </div>
       </div>
+      </main>
+
+      <SiteFooter />
 
       <a
         className="wa-float"
