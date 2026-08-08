@@ -359,7 +359,7 @@ export default function AdminPage() {
               Product Category
               <select required value={category} onChange={(e) => setCategory(e.target.value)}>
                 <option value="Funko Pops">Funko Pops</option>
-                <option value="Anime Figures">Anime Figures</option>
+                <option value="Action Figures">Action Figures</option>
                 <option value="3D Prints">3D Prints</option>
               </select>
             </label>

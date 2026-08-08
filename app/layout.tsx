@@ -4,7 +4,7 @@ import CartWidget from "@/components/CartWidget";
 
 export const metadata: Metadata = {
   title: "Popwars Collectables — The Vault of Legends",
-  description: "Funko Pops, anime figures, and 3D prints — claimed one traveler at a time.",
+  description: "Funko Pops, action figures, and 3D prints — claimed one traveler at a time.",
 };
 
 export default function RootLayout({

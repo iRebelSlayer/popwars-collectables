@@ -11,7 +11,7 @@ export const PAGE_LABELS: Record<PageSlug, string> = {
 export const PAGE_DEFAULTS: Record<PageSlug, string> = {
   "about-us": `Popwars Collectables was built for one kind of person: the collector who remembers exactly where they were when they found the piece that completed their shelf.
 
-We deal in Funko Pops, anime figures, action figures, and premium 3D-printed collectables — the kind of pieces that turn a room into a story worth telling.
+We deal in Funko Pops, action figures, and premium 3D-printed collectables — the kind of pieces that turn a room into a story worth telling.
 
 Our vault is home to collectables from the worlds fans love most. Whether you're hunting characters from **Marvel, DC, Star Wars, Naruto, One Piece, Dragon Ball Z, Demon Slayer, Jujutsu Kaisen, Attack on Titan, My Hero Academia**, or many more universes, we focus on bringing together figures that collectors genuinely want to own. From everyday favourites to exclusives and limited releases, every item is carefully selected with collectors in mind.
 

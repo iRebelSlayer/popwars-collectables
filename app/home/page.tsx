@@ -10,9 +10,14 @@ import { Review } from "@/lib/reviews";
 import { getAllReviews } from "@/lib/reviewsApi";
 import { addToCart } from "@/lib/cart";
 
-const CATEGORY_CARDS = [
+const CATEGORY_CARDS: { label: string; filter: string; c1: string; logo?: string; image?: string }[] = [
   { label: "Funko Pops", filter: "Funko Pops", c1: "#7A1F24", logo: "https://i.ibb.co/k66chQQQ/funko-logo.png" },
-  { label: "Anime Figures", filter: "Anime Figures", c1: "#1f2a4d" },
+  {
+    label: "Action Figures",
+    filter: "Action Figures",
+    c1: "#1f2a4d",
+    image: "https://i.ibb.co/gMhwvBGs/Whats-App-Image-2026-08-08-at-6-03-13-PM.jpg",
+  },
   { label: "3D Prints", filter: "3D Prints", c1: "#3a2e14" },
 ];
 
@@ -58,7 +63,8 @@ export default function HomePage() {
   const categoryImages = useMemo(() => {
     const map: Record<string, string | undefined> = {};
     CATEGORY_CARDS.forEach((card) => {
-      map[card.filter] = allProducts.find((p) => p.category === card.filter && p.images?.[0])?.images?.[0];
+      map[card.filter] =
+        card.image ?? allProducts.find((p) => p.category === card.filter && p.images?.[0])?.images?.[0];
     });
     return map;
   }, [allProducts]);
@@ -103,7 +109,7 @@ export default function HomePage() {
           <div className="hero-copy">
             <img className="hero-logo" src="/logo-transparent.png" alt="Popwars Collectables" />
             <p className="hero-tagline">Every Shelf Tells a Story</p>
-            <p className="hero-description">Funko Pops, anime figures, and 3D prints — claimed one traveler at a time.</p>
+            <p className="hero-description">Funko Pops, action figures, and 3D prints — claimed one traveler at a time.</p>
             <form
               className="search"
               onSubmit={(e) => {
@@ -130,7 +136,7 @@ export default function HomePage() {
         <section className="section" id="collections">
           <div className="section-head">
             <h2>Shop by Category</h2>
-            <p>Funko Pops lead the vault, backed by premium anime figures and 3D prints.</p>
+            <p>Funko Pops lead the vault, backed by premium action figures and 3D prints.</p>
           </div>
           <div className="collections categories">
             {CATEGORY_CARDS.map((card) => {
