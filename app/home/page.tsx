@@ -55,6 +55,14 @@ export default function HomePage() {
     });
   }, []);
 
+  const categoryImages = useMemo(() => {
+    const map: Record<string, string | undefined> = {};
+    CATEGORY_CARDS.forEach((card) => {
+      map[card.filter] = allProducts.find((p) => p.category === card.filter && p.images?.[0])?.images?.[0];
+    });
+    return map;
+  }, [allProducts]);
+
   const filteredProducts = useMemo(() => {
     const needle = filter.toLowerCase();
     return allProducts.filter((product) =>
@@ -125,16 +133,29 @@ export default function HomePage() {
             <p>Funko Pops lead the vault, backed by premium anime figures and 3D prints.</p>
           </div>
           <div className="collections categories">
-            {CATEGORY_CARDS.map((card) => (
-              <button
-                key={card.filter}
-                className="coll-card"
-                style={{ ["--c1" as string]: card.c1, ["--c2" as string]: "#131110" }}
-                onClick={() => applyFilter(card.filter)}
-              >
-                {card.label}
-              </button>
-            ))}
+            {CATEGORY_CARDS.map((card) => {
+              const image = categoryImages[card.filter];
+              return (
+                <button
+                  key={card.filter}
+                  className="coll-card"
+                  style={{
+                    ["--c1" as string]: card.c1,
+                    ["--c2" as string]: "#131110",
+                    ...(image
+                      ? {
+                          backgroundImage: `linear-gradient(160deg, rgba(19,17,16,.2), rgba(19,17,16,.85)), url(${image})`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                        }
+                      : {}),
+                  }}
+                  onClick={() => applyFilter(card.filter)}
+                >
+                  {card.label}
+                </button>
+              );
+            })}
           </div>
           <div className="franchise-chips">
             {FRANCHISE_CHIPS.map((name) => (
