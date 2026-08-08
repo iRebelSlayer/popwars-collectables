@@ -21,16 +21,6 @@ const CATEGORY_CARDS: { label: string; filter: string; c1: string; image?: strin
   { label: "3D Prints", filter: "3D Prints", c1: "#3a2e14", image: "https://i.ibb.co/xccw9jR/3-D-print-logo.jpg" },
 ];
 
-const FRANCHISE_CHIPS = [
-  "Naruto",
-  "One Piece",
-  "Dragon Ball Z",
-  "Demon Slayer",
-  "Jujutsu Kaisen",
-  "Attack on Titan",
-  "My Hero Academia",
-];
-
 const PRODUCTS_PER_PAGE = 8;
 
 function ProductThumb({ product }: { product: Product }) {
@@ -67,6 +57,14 @@ export default function HomePage() {
         card.image ?? allProducts.find((p) => p.category === card.filter && p.images?.[0])?.images?.[0];
     });
     return map;
+  }, [allProducts]);
+
+  const availableFranchises = useMemo(() => {
+    const set = new Set<string>();
+    allProducts.forEach((product) => {
+      if (product.collection && product.statusClass !== "sold-out") set.add(product.collection);
+    });
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
   }, [allProducts]);
 
   const filteredProducts = useMemo(() => {
@@ -164,7 +162,7 @@ export default function HomePage() {
             })}
           </div>
           <div className="franchise-chips">
-            {FRANCHISE_CHIPS.map((name) => (
+            {availableFranchises.map((name) => (
               <button
                 key={name}
                 className={`chip ${activeChip === name ? "active" : ""}`}
