@@ -11,7 +11,7 @@ import { getAllReviews } from "@/lib/reviewsApi";
 import { addToCart } from "@/lib/cart";
 
 const CATEGORY_CARDS = [
-  { label: "Funko Pops", filter: "Funko Pops", c1: "#7A1F24" },
+  { label: "Funko Pops", filter: "Funko Pops", c1: "#7A1F24", logo: "https://i.ibb.co/k66chQQQ/funko-logo.png" },
   { label: "Anime Figures", filter: "Anime Figures", c1: "#1f2a4d" },
   { label: "3D Prints", filter: "3D Prints", c1: "#3a2e14" },
 ];
@@ -135,6 +135,18 @@ export default function HomePage() {
           <div className="collections categories">
             {CATEGORY_CARDS.map((card) => {
               const image = categoryImages[card.filter];
+              if (card.logo) {
+                return (
+                  <button
+                    key={card.filter}
+                    className="coll-card coll-card-logo-bg"
+                    onClick={() => applyFilter(card.filter)}
+                  >
+                    <img className="coll-card-logo" src={card.logo} alt={card.label} />
+                    <span className="coll-card-caption">{card.label}</span>
+                  </button>
+                );
+              }
               return (
                 <button
                   key={card.filter}
