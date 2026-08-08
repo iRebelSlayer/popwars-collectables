@@ -220,9 +220,6 @@ button, input, select, textarea { font: inherit; }
 .collections.categories .coll-card { aspect-ratio: 16/10; font-size: 1.05rem; align-items: center; justify-content: center; text-align: center; cursor: pointer; transition: transform .2s ease, box-shadow .2s ease; }
 .collections.categories .coll-card:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(19,17,16,.16); }
 .coll-card { aspect-ratio: 1; border-radius: 16px; display: flex; align-items: flex-end; padding: 12px; font-size: .82rem; font-weight: 700; color: #fff; background: linear-gradient(160deg, var(--c1, #7A1F24), var(--c2, #131110)); box-shadow: 0 10px 26px rgba(19,17,16,.1); border: none; }
-.coll-card-logo-bg { background: #fff; flex-direction: column; gap: 10px; }
-.coll-card-logo { max-width: 62%; max-height: 46%; object-fit: contain; }
-.coll-card-logo-bg .coll-card-caption { color: var(--ink); font-weight: 700; font-size: 1.05rem; }
 .franchise-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
 .chip { font-size: .78rem; font-weight: 600; padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(19,17,16,.15); background: rgba(255,255,255,.65); color: var(--ink); cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
 .chip:hover { border-color: rgba(19,17,16,.3); }
