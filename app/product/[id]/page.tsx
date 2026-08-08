@@ -15,7 +15,6 @@ export default function ProductPage() {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState(0);
-  const [buying, setBuying] = useState(false);
 
   useEffect(() => {
     getAllProducts().then((products) => {
@@ -76,14 +75,12 @@ export default function ProductPage() {
             <button
               className="btn btn-whatsapp"
               type="button"
-              disabled={product.statusClass === "sold-out" || buying}
-              onClick={async () => {
-                setBuying(true);
-                await checkoutViaWhatsApp([{ id: product.id, name: product.name, price: product.price, image: images[0], qty: 1 }]);
-                setBuying(false);
-              }}
+              disabled={product.statusClass === "sold-out"}
+              onClick={() =>
+                checkoutViaWhatsApp([{ id: product.id, name: product.name, price: product.price, image: images[0], qty: 1 }])
+              }
             >
-              {product.statusClass === "sold-out" ? "Sold Out" : buying ? "Preparing…" : "Buy on WhatsApp"}
+              {product.statusClass === "sold-out" ? "Sold Out" : "Buy on WhatsApp"}
             </button>
             <button
               className="btn btn-secondary"

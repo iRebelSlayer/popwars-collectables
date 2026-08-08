@@ -11,8 +11,6 @@ export default function CartWidget() {
   const pathname = usePathname();
   const items = useCart();
   const [open, setOpen] = useState(false);
-  const [checkingOut, setCheckingOut] = useState(false);
-  const [checkoutNote, setCheckoutNote] = useState("");
 
   const hidden = pathname === "/" || HIDDEN_PREFIXES.some((prefix) => pathname?.startsWith(prefix));
   if (hidden) return null;
@@ -20,17 +18,9 @@ export default function CartWidget() {
   const count = cartCount(items);
   const total = cartTotal(items);
 
-  async function handleCheckout() {
+  function handleCheckout() {
     if (items.length === 0) return;
-    setCheckingOut(true);
-    setCheckoutNote("");
-    const result = await checkoutViaWhatsApp(items);
-    setCheckingOut(false);
-    setCheckoutNote(
-      result.downloaded
-        ? "Order image downloaded — attach it in the WhatsApp chat that just opened."
-        : ""
-    );
+    checkoutViaWhatsApp(items);
     clearCart();
   }
 
@@ -77,15 +67,9 @@ export default function CartWidget() {
                   <span>Total</span>
                   <span>₹{total.toLocaleString("en-IN")}</span>
                 </div>
-                <button
-                  className="btn btn-whatsapp cart-checkout-btn"
-                  type="button"
-                  onClick={handleCheckout}
-                  disabled={checkingOut}
-                >
-                  {checkingOut ? "Preparing…" : "Checkout on WhatsApp"}
+                <button className="btn btn-whatsapp cart-checkout-btn" type="button" onClick={handleCheckout}>
+                  Checkout on WhatsApp
                 </button>
-                {checkoutNote && <p className="admin-note">{checkoutNote}</p>}
               </div>
             )}
           </aside>
